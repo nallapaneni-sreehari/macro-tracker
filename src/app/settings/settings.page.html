@@ -1,0 +1,211 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- User Profile -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="person-circle-outline"></ion-icon>
+        Profile
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-input label="Email" labelPlacement="stacked" type="email" [(ngModel)]="profile.email" placeholder="you@example.com"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Name" labelPlacement="stacked" [(ngModel)]="profile.name" placeholder="Your name"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Age" labelPlacement="stacked" type="number" [(ngModel)]="profile.age" placeholder="25"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Gender" labelPlacement="stacked" [(ngModel)]="profile.gender" interface="popover">
+            <ion-select-option value="male">Male</ion-select-option>
+            <ion-select-option value="female">Female</ion-select-option>
+            <ion-select-option value="other">Other</ion-select-option>
+            <ion-select-option value="prefer-not-to-say">Prefer not to say</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Weight" labelPlacement="stacked" type="number" [(ngModel)]="profile.weight" placeholder="70"></ion-input>
+          <ion-select slot="end" [(ngModel)]="profile.weightUnit" interface="popover" class="unit-select">
+            <ion-select-option value="kg">kg</ion-select-option>
+            <ion-select-option value="lbs">lbs</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Height" labelPlacement="stacked" type="number" [(ngModel)]="profile.height" placeholder="170"></ion-input>
+          <ion-select slot="end" [(ngModel)]="profile.heightUnit" interface="popover" class="unit-select">
+            <ion-select-option value="cm">cm</ion-select-option>
+            <ion-select-option value="ft">ft</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Activity Level" labelPlacement="stacked" [(ngModel)]="profile.activityLevel" interface="popover">
+            <ion-select-option value="sedentary">Sedentary (desk job)</ion-select-option>
+            <ion-select-option value="light">Lightly Active (1-3 days/week)</ion-select-option>
+            <ion-select-option value="moderate">Moderately Active (3-5 days/week)</ion-select-option>
+            <ion-select-option value="active">Active (6-7 days/week)</ion-select-option>
+            <ion-select-option value="very-active">Very Active (athlete)</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <!-- BMR / TDEE -->
+      <div class="calorie-estimate" *ngIf="estimatedBMR">
+        <ion-chip color="primary">
+          <ion-icon name="calculator-outline"></ion-icon>
+          <ion-label>BMR: {{ estimatedBMR }} cal/day</ion-label>
+        </ion-chip>
+        <ion-chip color="success">
+          <ion-icon name="flame-outline"></ion-icon>
+          <ion-label>TDEE: {{ estimatedTDEE }} cal/day</ion-label>
+        </ion-chip>
+      </div>
+
+      <ion-button expand="block" (click)="saveProfile()">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save Profile
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Appearance / Theme Picker -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="color-palette-outline"></ion-icon>
+        Theme
+      </ion-card-title>
+      <ion-card-subtitle>Choose your vibe</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="theme-grid">
+        <div
+          *ngFor="let t of themeOptions"
+          class="theme-card"
+          [class.selected]="settings.theme === t.id"
+          (click)="selectTheme(t.id)"
+        >
+          <div class="theme-preview" [style.background]="t.gradient">
+            <div class="preview-glass">
+              <span class="dot" [style.background]="'#fff'" style="opacity: 0.9"></span>
+              <span class="dot" [style.background]="'#fff'" style="opacity: 0.5"></span>
+              <span class="dot dot-sm" [style.background]="'#fff'" style="opacity: 0.3"></span>
+            </div>
+          </div>
+          <div class="theme-label">
+            <span class="theme-emoji">{{ t.emoji }}</span>
+            <span class="theme-name">{{ t.name }}</span>
+          </div>
+          <ion-icon name="checkmark-circle" class="check-icon" *ngIf="settings.theme === t.id"></ion-icon>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Display Preferences -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="options-outline"></ion-icon>
+        Display Preferences
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-toggle [(ngModel)]="settings.showFiber" (ionChange)="saveSettings()">Show Fiber</ion-toggle>
+        </ion-item>
+        <ion-item>
+          <ion-toggle [(ngModel)]="settings.showSugar" (ionChange)="saveSettings()">Show Sugar</ion-toggle>
+        </ion-item>
+        <ion-item>
+          <ion-toggle [(ngModel)]="settings.showSodium" (ionChange)="saveSettings()">Show Sodium</ion-toggle>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Default Meals -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="restaurant-outline"></ion-icon>
+        Default Meals
+      </ion-card-title>
+      <ion-card-subtitle>These meals will show as suggestions when adding a new meal</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let meal of mealOptions">
+          <ion-checkbox [checked]="isDefaultMeal(meal)" (ionChange)="toggleDefaultMeal(meal)">
+            {{ meal }}
+          </ion-checkbox>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="block" fill="outline" (click)="saveSettings()">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save Defaults
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Water Goal -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="water-outline"></ion-icon>
+        Daily Water Goal
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-input label="Water Goal" labelPlacement="stacked" type="number" [(ngModel)]="settings.waterGoal" placeholder="3"></ion-input>
+        <ion-note slot="end">liters</ion-note>
+      </ion-item>
+      <ion-button expand="block" fill="outline" (click)="saveSettings()">
+        Save
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Data Management -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="server-outline"></ion-icon>
+        Data Management
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" fill="outline" color="primary" (click)="exportData()">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        Export Data (JSON)
+      </ion-button>
+      <ion-button expand="block" fill="outline" color="danger" (click)="clearAllData()">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Clear All Data
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- App Info -->
+  <ion-card class="app-info-card">
+    <ion-card-content>
+      <div class="app-info">
+        <strong>MacroTracker</strong>
+        <p>Version 1.0.0</p>
+        <p class="muted">Built with Ionic + Angular</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

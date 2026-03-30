@@ -1,0 +1,94 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="dismiss()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="astra-title">
+        <div class="astra-avatar-sm">
+          <ion-icon name="sparkles"></ion-icon>
+        </div>
+        <div>
+          <span class="title-name">Milo</span>
+          <span class="title-sub">AI Nutrition Assistant</span>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="clearChat()" title="Clear chat">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Messages -->
+  <div class="chat-scroll" #scrollContainer>
+    <div class="messages-wrap">
+
+      <div
+        *ngFor="let msg of messages"
+        class="message-row"
+        [class.row-user]="msg.role === 'user'"
+        [class.row-assistant]="msg.role === 'assistant'"
+      >
+        <!-- Assistant avatar -->
+        <div *ngIf="msg.role === 'assistant'" class="msg-avatar">
+          <ion-icon name="sparkles"></ion-icon>
+        </div>
+
+        <!-- Bubble -->
+        <div class="bubble" [class.bubble-user]="msg.role === 'user'" [class.bubble-assistant]="msg.role === 'assistant'">
+          <span [innerHTML]="msg.content | astraFormat"></span>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div *ngIf="loading" class="message-row row-assistant">
+        <div class="msg-avatar"><ion-icon name="sparkles"></ion-icon></div>
+        <div class="bubble bubble-assistant typing-bubble">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Suggestions -->
+  <div *ngIf="showSuggestions" class="suggestions-wrap">
+    <p class="suggestions-label">Try asking:</p>
+    <div class="suggestions-scroll">
+      <button
+        *ngFor="let s of suggestions"
+        class="suggestion-chip"
+        (click)="send(s)"
+      >{{ s }}</button>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Input bar -->
+<ion-footer class="ion-no-border">
+  <div class="input-bar">
+    <ion-item lines="none" class="input-item">
+      <ion-input
+        [(ngModel)]="input"
+        placeholder="Ask Milo anything…"
+        (keyup.enter)="send()"
+        [disabled]="loading"
+        class="chat-input"
+      ></ion-input>
+    </ion-item>
+    <ion-button
+      fill="solid"
+      class="send-btn"
+      (click)="send()"
+      [disabled]="!input.trim() || loading"
+    >
+      <ion-icon slot="icon-only" name="arrow-up-outline"></ion-icon>
+    </ion-button>
+  </div>
+</ion-footer>

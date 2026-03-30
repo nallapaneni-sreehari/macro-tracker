@@ -1,0 +1,214 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ isEditing ? 'Edit Food' : 'Add Food' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" [disabled]="!name.trim()">
+        <strong>Save</strong>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Segment Toggle -->
+  <ion-segment [(ngModel)]="segment" *ngIf="!isEditing">
+    <ion-segment-button value="search">
+      <ion-label>Search</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="ai">
+      <ion-label>AI Recipe</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="manual">
+      <ion-label>Manual</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Search Section -->
+  <div *ngIf="segment === 'search'" class="search-section">
+    <ion-searchbar
+      [(ngModel)]="searchQuery"
+      placeholder="Search foods (e.g. chicken breast)"
+      (ionInput)="onSearch()"
+      debounce="500">
+    </ion-searchbar>
+
+    <ion-spinner *ngIf="isSearching" class="search-spinner"></ion-spinner>
+
+    <ion-list *ngIf="searchResults.length > 0">
+      <ion-item *ngFor="let result of searchResults" [button]="true" (click)="selectResult(result)">
+        <ion-label>
+          <h3>{{ result.description }}</h3>
+          <p *ngIf="result.brandName">{{ result.brandName }}</p>
+          <p>{{ result.macros.calories }} cal · P:{{ result.macros.protein }}g C:{{ result.macros.carbs }}g F:{{ result.macros.fat }}g</p>
+        </ion-label>
+        <ion-icon name="add-circle-outline" slot="end" color="primary"></ion-icon>
+      </ion-item>
+    </ion-list>
+
+    <div class="empty-search" *ngIf="!isSearching && searchResults.length === 0 && searchQuery.length >= 2">
+      <p>No results found. Try a different search or enter manually.</p>
+    </div>
+  </div>
+
+  <!-- Manual / Edit Section -->
+  <div *ngIf="segment === 'manual'" class="manual-section">
+    <div *ngIf="autoFetched" class="auto-badge">
+      <ion-chip color="success">
+        <ion-icon name="cloud-done-outline"></ion-icon>
+        <ion-label>Auto-fetched — edit values below if needed</ion-label>
+      </ion-chip>
+    </div>
+
+    <ion-list>
+      <ion-item>
+        <ion-input label="Food name" labelPlacement="stacked" [(ngModel)]="name" placeholder="e.g. Chicken Breast"></ion-input>
+      </ion-item>
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>Serving</ion-label>
+        </ion-item-divider>
+        <ion-item>
+          <ion-input label="Size" labelPlacement="stacked" type="number" [(ngModel)]="servingSize" placeholder="100"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-select label="Unit" labelPlacement="stacked" [(ngModel)]="servingUnit" interface="popover">
+            <ion-select-option value="g">grams (g)</ion-select-option>
+            <ion-select-option value="ml">milliliters (ml)</ion-select-option>
+            <ion-select-option value="oz">ounces (oz)</ion-select-option>
+            <ion-select-option value="cup">cups</ion-select-option>
+            <ion-select-option value="tbsp">tablespoon</ion-select-option>
+            <ion-select-option value="tsp">teaspoon</ion-select-option>
+            <ion-select-option value="piece">piece</ion-select-option>
+            <ion-select-option value="serving">serving</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-item-group>
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>Macros</ion-label>
+        </ion-item-divider>
+        <ion-item>
+          <ion-input label="Calories" labelPlacement="stacked" type="number" [(ngModel)]="calories" placeholder="0"></ion-input>
+          <ion-note slot="end">kcal</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Protein" labelPlacement="stacked" type="number" [(ngModel)]="protein" placeholder="0"></ion-input>
+          <ion-note slot="end">g</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Carbohydrates" labelPlacement="stacked" type="number" [(ngModel)]="carbs" placeholder="0"></ion-input>
+          <ion-note slot="end">g</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Fat" labelPlacement="stacked" type="number" [(ngModel)]="fat" placeholder="0"></ion-input>
+          <ion-note slot="end">g</ion-note>
+        </ion-item>
+      </ion-item-group>
+
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-label>Additional (optional)</ion-label>
+        </ion-item-divider>
+        <ion-item>
+          <ion-input label="Fiber" labelPlacement="stacked" type="number" [(ngModel)]="fiber" placeholder="0"></ion-input>
+          <ion-note slot="end">g</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Sugar" labelPlacement="stacked" type="number" [(ngModel)]="sugar" placeholder="0"></ion-input>
+          <ion-note slot="end">g</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Sodium" labelPlacement="stacked" type="number" [(ngModel)]="sodium" placeholder="0"></ion-input>
+          <ion-note slot="end">mg</ion-note>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+
+    <div class="save-area">
+      <ion-button expand="block" (click)="save()" [disabled]="!name.trim()">
+        {{ isEditing ? 'Update Item' : 'Add to Meal' }}
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- AI Recipe Section -->
+  <div *ngIf="segment === 'ai'" class="ai-section">
+    <div class="ai-input-area">
+      <ion-item>
+        <ion-textarea
+          label="Describe your meal"
+          labelPlacement="stacked"
+          [(ngModel)]="recipeText"
+          placeholder="e.g. 1 whole egg, 100g paneer, 2 egg whites, 10ml oil"
+          rows="3"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+      <ion-button expand="block" (click)="parseRecipe()" [disabled]="!recipeText.trim() || isParsing">
+        <ion-icon name="sparkles-outline" slot="start"></ion-icon>
+        {{ isParsing ? 'Analyzing...' : 'Analyze with AI' }}
+      </ion-button>
+    </div>
+
+    <ion-spinner *ngIf="isParsing" class="ai-spinner"></ion-spinner>
+
+    <div *ngIf="aiError" class="ai-error">
+      <ion-chip color="danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <ion-label>{{ aiError }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <div *ngIf="aiItems.length > 0" class="ai-results">
+      <div class="ai-summary">
+        <ion-chip color="primary">
+          <ion-icon name="flame-outline"></ion-icon>
+          <ion-label>{{ aiTotalCalories() | number:'1.0-0' }} cal</ion-label>
+        </ion-chip>
+        <ion-chip color="success">
+          <ion-label>P: {{ aiTotalProtein() | number:'1.0-1' }}g</ion-label>
+        </ion-chip>
+        <ion-chip color="warning">
+          <ion-label>C: {{ aiTotalCarbs() | number:'1.0-1' }}g</ion-label>
+        </ion-chip>
+        <ion-chip color="tertiary">
+          <ion-label>F: {{ aiTotalFat() | number:'1.0-1' }}g</ion-label>
+        </ion-chip>
+      </div>
+
+      <ion-list>
+        <ion-item-sliding *ngFor="let item of aiItems; let i = index">
+          <ion-item>
+            <ion-icon name="nutrition-outline" slot="start" color="primary"></ion-icon>
+            <ion-label>
+              <h3>{{ item.name }}</h3>
+              <p>{{ item.servingSize }}{{ item.servingUnit }} · {{ item.calories }} cal · P:{{ item.protein }}g C:{{ item.carbs }}g F:{{ item.fat }}g</p>
+            </ion-label>
+            <ion-button fill="clear" slot="end" (click)="editAiItem(item)" title="Edit">
+              <ion-icon name="create-outline" slot="icon-only" color="primary"></ion-icon>
+            </ion-button>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="removeAiItem(i)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+      <div class="ai-actions">
+        <ion-button expand="block" (click)="acceptAllAiItems()">
+          <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+          Add All Items to Meal
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

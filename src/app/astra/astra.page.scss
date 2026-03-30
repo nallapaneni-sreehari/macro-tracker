@@ -1,0 +1,209 @@
+// ── Header ──
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --border-width: 0;
+}
+
+.astra-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.astra-avatar-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--ion-color-primary-gradient, linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-tint)));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 17px;
+    color: #fff;
+  }
+}
+
+.title-name {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--ion-text-color);
+}
+
+.title-sub {
+  display: block;
+  font-size: 11px;
+  color: var(--ion-color-medium);
+  font-weight: 400;
+}
+
+// ── Chat scroll ──
+.chat-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 12px;
+}
+
+.messages-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 16px 8px;
+}
+
+// ── Message rows ──
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+
+  &.row-user {
+    flex-direction: row-reverse;
+  }
+}
+
+.msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-tint));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+
+  ion-icon {
+    font-size: 14px;
+    color: #fff;
+  }
+}
+
+// ── Bubbles ──
+.bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+
+  &.bubble-assistant {
+    background: var(--ion-card-background, rgba(var(--ion-color-primary-rgb), 0.1));
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.15);
+    color: var(--ion-text-color);
+    border-bottom-left-radius: 4px;
+  }
+
+  &.bubble-user {
+    background: var(--ion-color-primary);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  // Bold markdown
+  ::ng-deep strong { font-weight: 700; }
+}
+
+// ── Typing dots ──
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  animation: dotBounce 1.2s ease-in-out infinite;
+
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.4s; }
+}
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%            { transform: translateY(-6px); opacity: 1; }
+}
+
+// ── Suggestions ──
+.suggestions-wrap {
+  padding: 0 16px 12px;
+}
+
+.suggestions-label {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin: 0 0 8px;
+}
+
+.suggestions-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestion-chip {
+  background: var(--ion-card-background, rgba(var(--ion-color-primary-rgb), 0.08));
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  color: var(--ion-color-primary);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:active {
+    background: rgba(var(--ion-color-primary-rgb), 0.18);
+  }
+}
+
+// ── Footer input ──
+ion-footer {
+  background: var(--ion-background-color);
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--ion-border-color, rgba(var(--ion-color-primary-rgb), 0.1));
+}
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-item {
+  flex: 1;
+  --background: var(--ion-card-background, rgba(var(--ion-color-primary-rgb), 0.06));
+  --border-radius: 14px;
+  --padding-start: 14px;
+  --inner-padding-end: 10px;
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.18);
+  border-radius: 14px;
+}
+
+.chat-input {
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.send-btn {
+  --background: var(--ion-color-primary);
+  --border-radius: 12px;
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 20px;
+  }
+}

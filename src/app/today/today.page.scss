@@ -1,0 +1,140 @@
+.date-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  gap: 4px;
+}
+
+.macro-summary-card {
+  margin: 8px 16px;
+
+  .macro-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    margin-bottom: 4px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .macro-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+
+  .macro-values {
+    font-size: 14px;
+
+    .current {
+      font-weight: 600;
+    }
+
+    .separator {
+      margin: 0 2px;
+      color: var(--ion-color-medium);
+    }
+
+    .goal {
+      color: var(--ion-color-medium);
+    }
+  }
+
+  ion-progress-bar {
+    border-radius: 4px;
+    height: 6px;
+    margin-bottom: 4px;
+  }
+}
+
+.water-card {
+  margin: 8px 16px;
+
+  .water-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .water-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 20px;
+    }
+  }
+
+  .water-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .water-count {
+      font-weight: 600;
+      min-width: 80px;
+      text-align: center;
+      cursor: pointer;
+      border-bottom: 1px dashed var(--ion-color-primary);
+      color: var(--ion-color-primary);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  }
+}
+
+.meals-section {
+  padding: 0 16px 16px;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 12px 0 8px;
+    }
+  }
+
+  ion-list {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--ion-border-color, transparent);
+  }
+}
+
+.completed-meal {
+  opacity: 0.6;
+
+  h2 {
+    text-decoration: line-through;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,168 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>MacroTracker</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Date Picker -->
+  <div class="date-bar">
+    <ion-button fill="clear" size="small" (click)="goDay(-1)">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <ion-chip color="primary" (click)="openDatePicker()">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <ion-label>{{ selectedDate === todayKey ? 'Today' : selectedDate }}</ion-label>
+    </ion-chip>
+    <ion-button fill="clear" size="small" (click)="goDay(1)" [disabled]="isToday">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Daily Macro Summary -->
+  <ion-card class="macro-summary-card" *ngIf="log">
+    <ion-card-header>
+      <ion-card-title>Daily Summary</ion-card-title>
+      <ion-card-subtitle>
+        {{ completedMeals }}/{{ totalMeals }} meals completed
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <!-- Calories -->
+      <div class="macro-row">
+        <div class="macro-label">
+          <ion-icon name="flame-outline" color="danger"></ion-icon>
+          <span>Calories</span>
+        </div>
+        <div class="macro-values">
+          <span class="current">{{ dailyMacros.calories | number:'1.0-0' }}</span>
+          <span class="separator">/</span>
+          <span class="goal">{{ goals.calories }}</span>
+        </div>
+      </div>
+      <ion-progress-bar [value]="macroPercent(dailyMacros.calories, goals.calories) / 100" color="danger"></ion-progress-bar>
+
+      <!-- Protein -->
+      <div class="macro-row">
+        <div class="macro-label">
+          <ion-icon name="fish-outline" color="success"></ion-icon>
+          <span>Protein</span>
+        </div>
+        <div class="macro-values">
+          <span class="current">{{ dailyMacros.protein | number:'1.0-1' }}g</span>
+          <span class="separator">/</span>
+          <span class="goal">{{ goals.protein }}g</span>
+        </div>
+      </div>
+      <ion-progress-bar [value]="macroPercent(dailyMacros.protein, goals.protein) / 100" color="success"></ion-progress-bar>
+
+      <!-- Carbs -->
+      <div class="macro-row">
+        <div class="macro-label">
+          <ion-icon style="transform: rotate(215deg)" name="pizza-outline" color="warning"></ion-icon>
+          <span>Carbs</span>
+        </div>
+        <div class="macro-values">
+          <span class="current">{{ dailyMacros.carbs | number:'1.0-1' }}g</span>
+          <span class="separator">/</span>
+          <span class="goal">{{ goals.carbs }}g</span>
+        </div>
+      </div>
+      <ion-progress-bar [value]="macroPercent(dailyMacros.carbs, goals.carbs) / 100" color="warning"></ion-progress-bar>
+      <!-- Fat -->
+      <div class="macro-row">
+        <div class="macro-label">
+          <ion-icon name="water-outline" color="tertiary"></ion-icon>
+          <span>Fat</span>
+        </div>
+        <div class="macro-values">
+          <span class="current">{{ dailyMacros.fat | number:'1.0-1' }}g</span>
+          <span class="separator">/</span>
+          <span class="goal">{{ goals.fat }}g</span>
+        </div>
+      </div>
+      <ion-progress-bar [value]="macroPercent(dailyMacros.fat, goals.fat) / 100" color="tertiary"></ion-progress-bar>
+    
+      <!-- Fiber -->
+        <div class="macro-row">
+          <div class="macro-label">
+            <ion-icon name="leaf-outline" color="success"></ion-icon>
+            <span>Fiber</span>
+          </div>
+          <div class="macro-values">
+            <span class="current">{{ dailyMacros.fiber | number:'1.0-1' }}g</span>
+            <span class="separator">/</span>
+            <span class="goal">{{ goals.fiber }}g</span>
+          </div>
+        </div>
+        <ion-progress-bar [value]="macroPercent(dailyMacros.fiber ?? 0, goals.fiber ?? 0) / 100" color="success"></ion-progress-bar>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Water Intake -->
+  <ion-card class="water-card" *ngIf="log">
+    <ion-card-content>
+      <div class="water-row">
+        <div class="water-label">
+          <ion-icon name="water" color="primary"></ion-icon>
+          <span>Water</span>
+        </div>
+        <div class="water-controls">
+          <ion-button fill="clear" size="small" (click)="removeWater()" [disabled]="log.waterIntake <= 0">
+            <ion-icon name="remove-circle-outline"></ion-icon>
+          </ion-button>
+          <span class="water-count" (click)="setWaterCustom()">{{ log.waterIntake | number:'1.2-2' }} L</span>
+          <ion-button fill="clear" size="small" (click)="addWater()">
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Meals List -->
+  <div class="meals-section">
+    <div class="section-header">
+      <h2>Meals</h2>
+      <ion-button fill="clear" (click)="addMeal()">
+        <ion-icon name="add-circle" slot="start"></ion-icon>
+        Add Meal
+      </ion-button>
+    </div>
+
+    <ion-list *ngIf="log && log.meals.length > 0">
+      <ion-item-sliding *ngFor="let meal of log.meals">
+        <ion-item [button]="true" (click)="openMeal(meal)" [class.completed-meal]="meal.completed"
+                  (touchstart)="onMealTouchStart($event, meal)" (touchend)="onMealTouchEnd()" (touchmove)="onMealTouchEnd()">
+          <ion-icon [name]="meal.icon" slot="start" [color]="meal.completed ? 'medium' : 'primary'"></ion-icon>
+          <ion-label>
+            <h2>{{ meal.name }}</h2>
+            <p>{{ meal.items.length }} item{{ meal.items.length !== 1 ? 's' : '' }} · {{ getMealMacros(meal).calories | number:'1.0-0' }} cal</p>
+          </ion-label>
+          <ion-button fill="clear" slot="end" (click)="toggleComplete($event, meal)">
+            <ion-icon [name]="meal.completed ? 'checkmark-circle' : 'ellipse-outline'"
+                      [color]="meal.completed ? 'success' : 'medium'"></ion-icon>
+          </ion-button>
+          <ion-icon name="chevron-forward-outline" slot="end" color="medium"></ion-icon>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="removeMeal(meal)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <div class="empty-state" *ngIf="!log || log.meals.length === 0">
+      <ion-icon name="restaurant-outline" color="medium"></ion-icon>
+      <p>No meals yet. Tap "Add Meal" to get started!</p>
+    </div>
+  </div>
+
+  <!-- Astra FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openAstra()" color="primary">
+      <ion-icon name="sparkles-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -1,0 +1,85 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/today" (click)="goBack()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ meal?.name || 'Meal' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleComplete()">
+        <ion-icon [name]="meal?.completed ? 'checkmark-circle' : 'ellipse-outline'"
+                  [color]="meal?.completed ? 'success' : 'light'" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div *ngIf="meal">
+    <!-- Meal Macro Summary -->
+    <ion-card class="meal-macro-card">
+      <ion-card-content>
+        <div class="macro-chips">
+          <div class="macro-chip cal">
+            <span class="value">{{ mealMacros.calories | number:'1.0-0' }}</span>
+            <span class="label">cal</span>
+          </div>
+          <div class="macro-chip protein">
+            <span class="value">{{ mealMacros.protein | number:'1.0-1' }}g</span>
+            <span class="label">protein</span>
+          </div>
+          <div class="macro-chip carbs">
+            <span class="value">{{ mealMacros.carbs | number:'1.0-1' }}g</span>
+            <span class="label">carbs</span>
+          </div>
+          <div class="macro-chip fat">
+            <span class="value">{{ mealMacros.fat | number:'1.0-1' }}g</span>
+            <span class="label">fat</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Food Items -->
+    <div class="items-section">
+      <div class="section-header">
+        <h3>Items</h3>
+        <ion-button fill="solid" size="small" (click)="addFood()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Add Food
+        </ion-button>
+      </div>
+
+      <ion-list *ngIf="meal.items.length > 0">
+        <ion-item-sliding *ngFor="let item of meal.items">
+          <ion-item [button]="true" (click)="editItem(item)">
+            <ion-label>
+              <h2>{{ item.name }}</h2>
+              <p>{{ item.servingSize }}{{ item.servingUnit }} · {{ item.macros.calories | number:'1.0-0' }} cal</p>
+            </ion-label>
+            <ion-note slot="end" class="item-macros">
+              P:{{ item.macros.protein | number:'1.0-0' }} C:{{ item.macros.carbs | number:'1.0-0' }} F:{{ item.macros.fat | number:'1.0-0' }}
+            </ion-note>
+          </ion-item>
+          <ion-item-options side="end">
+            <ion-item-option color="danger" (click)="removeItem(item)">
+              <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+            </ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-list>
+
+      <div class="empty-state" *ngIf="meal.items.length === 0">
+        <ion-icon name="fast-food-outline" color="medium"></ion-icon>
+        <p>No items yet. Tap "Add Food" to search or enter manually.</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-section">
+      <ion-button expand="block" fill="outline" (click)="saveAsTemplate()">
+        <ion-icon name="bookmark-outline" slot="start"></ion-icon>
+        Save as Template
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

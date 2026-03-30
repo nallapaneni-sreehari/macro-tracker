@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>History</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-segment [(ngModel)]="segment">
+    <ion-segment-button value="history">
+      <ion-label>Daily Logs</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="templates">
+      <ion-label>Templates</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- History -->
+  <div *ngIf="segment === 'history'">
+    <ion-list *ngIf="dates.length > 0">
+      <ion-item *ngFor="let date of dates">
+        <ion-icon name="calendar-outline" slot="start" [color]="isToday(date) ? 'primary' : 'medium'"></ion-icon>
+        <ion-label>
+          <h2>{{ isToday(date) ? 'Today' : formatDate(date) }}</h2>
+          <p>{{ getLog(date)?.meals?.length || 0 }} meals · {{ getMacros(date).calories | number:'1.0-0' }} cal</p>
+          <p>P:{{ getMacros(date).protein | number:'1.0-0' }}g C:{{ getMacros(date).carbs | number:'1.0-0' }}g F:{{ getMacros(date).fat | number:'1.0-0' }}g</p>
+        </ion-label>
+        <ion-note slot="end">
+          <span [class]="getMacros(date).calories >= goals.calories ? 'goal-met' : 'goal-under'">
+            {{ getMacros(date).calories >= goals.calories ? '✓ Goal' : (goals.calories - getMacros(date).calories | number:'1.0-0') + ' left' }}
+          </span>
+        </ion-note>
+      </ion-item>
+    </ion-list>
+
+    <div class="empty-state" *ngIf="dates.length === 0">
+      <ion-icon name="time-outline" color="medium"></ion-icon>
+      <p>No history yet. Start logging your meals!</p>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <div *ngIf="segment === 'templates'">
+    <ion-list *ngIf="templates.length > 0">
+      <ion-item-sliding *ngFor="let t of templates">
+        <ion-item [button]="true" (click)="applyTemplate(t)">
+          <ion-icon [name]="t.icon" slot="start" color="primary"></ion-icon>
+          <ion-label>
+            <h2>{{ t.name }}</h2>
+            <p>{{ t.items.length }} items</p>
+          </ion-label>
+          <ion-button fill="clear" slot="end">
+            <ion-icon name="add-circle-outline" color="primary"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="renameTemplate(t)">
+            <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+          <ion-item-option color="danger" (click)="deleteTemplate(t)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+
+    <div class="empty-state" *ngIf="templates.length === 0">
+      <ion-icon name="bookmark-outline" color="medium"></ion-icon>
+      <p>No templates yet. Save a meal as template from the meal detail page.</p>
+    </div>
+  </div>
+</ion-content>

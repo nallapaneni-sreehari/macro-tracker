@@ -1,0 +1,7 @@
+{
+  "name": "macro-tracker",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,436 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* ── Modern Font: Inter ── */
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&display=swap');
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ══════════════════════════════════════════════════════════════
+   GLOBAL FONT
+   ══════════════════════════════════════════════════════════════ */
+:root {
+  --ion-font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body,
+ion-content,
+ion-item,
+ion-label,
+ion-input,
+ion-select,
+ion-textarea,
+ion-button,
+ion-card,
+ion-chip,
+ion-badge,
+ion-note,
+ion-title,
+ion-tab-bar,
+ion-searchbar,
+ion-segment-button,
+ion-alert,
+ion-toast,
+ion-modal {
+  font-family: var(--ion-font-family) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   COMPREHENSIVE THEME OVERRIDES — applies to all Ionic elements
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Toolbar ── */
+ion-toolbar {
+  --background: var(--ion-toolbar-background);
+  --color: var(--ion-toolbar-color);
+}
+
+ion-toolbar ion-title {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+ion-toolbar ion-back-button,
+ion-toolbar ion-button {
+  --color: var(--ion-toolbar-color);
+}
+
+/* ── Tab Bar — glass morphism ── */
+ion-tab-bar {
+  --background: var(--ion-tab-bar-background);
+  --color: var(--ion-tab-bar-color);
+  --color-selected: var(--ion-tab-bar-color-selected);
+  border-top: 1px solid var(--ion-border-color, #e0e0e0);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Cards — glass morphism ── */
+ion-card {
+  --background: var(--ion-card-background);
+  --color: var(--ion-text-color);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--ion-border-color, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-card {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+ion-card-header ion-card-title {
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+ion-card-header ion-card-subtitle {
+  color: var(--ion-color-medium);
+}
+
+/* ── Items / Lists ── */
+ion-list {
+  background: var(--ion-card-background);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+ion-card ion-list {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+ion-item {
+  --background: transparent;
+  --color: var(--ion-text-color);
+  --border-color: var(--ion-border-color, #e0e0e0);
+}
+
+ion-item-divider {
+  --background: var(--ion-color-light);
+  --color: var(--ion-text-color);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
+/* ── Input Fields ── */
+ion-input,
+ion-textarea {
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-placeholder-color, var(--ion-color-medium));
+  --background: transparent;
+  font-weight: 400;
+}
+
+ion-input .label-text,
+ion-textarea .label-text {
+  color: var(--ion-color-medium) !important;
+  font-weight: 500;
+}
+
+/* ── Selects / Dropdowns ── */
+ion-select {
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-placeholder-color, var(--ion-color-medium));
+}
+
+ion-select::part(text) {
+  color: var(--ion-text-color);
+}
+
+ion-select::part(placeholder) {
+  color: var(--ion-placeholder-color, var(--ion-color-medium));
+}
+
+ion-select::part(icon) {
+  color: var(--ion-color-primary);
+}
+
+/* ── Searchbar ── */
+ion-searchbar {
+  --background: var(--ion-item-background, var(--ion-card-background));
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-placeholder-color, var(--ion-color-medium));
+  --icon-color: var(--ion-color-primary);
+  --border-radius: 14px;
+  --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Segments ── */
+ion-segment {
+  margin: 8px 16px;
+  --background: var(--ion-color-light);
+  border-radius: 14px;
+}
+
+ion-segment-button {
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-color-primary);
+  --indicator-color: var(--ion-card-background, #fff);
+  --indicator-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-weight: 600;
+  --border-radius: 12px;
+  min-height: 36px;
+}
+
+/* ── Buttons ── */
+ion-button {
+  --border-radius: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  font-size: 14px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+/* Solid buttons (default) — gradient background */
+ion-button:not([fill]),
+ion-button[fill="solid"] {
+  --background: var(--theme-gradient, var(--ion-color-primary));
+  --background-activated: var(--ion-color-primary-shade);
+  --box-shadow: 0 4px 14px var(--theme-glow, rgba(0, 0, 0, 0.15)), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --color: #fff;
+}
+
+ion-button:not([fill]):active,
+ion-button[fill="solid"]:active {
+  transform: scale(0.96);
+  --box-shadow: 0 2px 6px var(--theme-glow, rgba(0, 0, 0, 0.12));
+}
+
+/* Outline buttons — glass look */
+ion-button[fill="outline"] {
+  --border-width: 1.5px;
+  --border-color: var(--ion-color-primary);
+  --background: rgba(var(--ion-color-primary-rgb), 0.06);
+  --background-activated: rgba(var(--ion-color-primary-rgb), 0.12);
+  --color: var(--ion-color-primary);
+  --box-shadow: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+ion-button[fill="outline"]:active {
+  transform: scale(0.96);
+}
+
+/* Clear buttons — subtle hover */
+ion-button[fill="clear"] {
+  --background-activated: rgba(var(--ion-color-primary-rgb), 0.08);
+  --box-shadow: none;
+  --ripple-color: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+ion-button[fill="clear"]:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+/* Block buttons — taller with more presence */
+ion-button[expand="block"] {
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  margin-top: 14px;
+  font-size: 15px;
+  min-height: 48px;
+}
+
+/* Danger buttons */
+ion-button[color="danger"]:not([fill="outline"]):not([fill="clear"]) {
+  --background: linear-gradient(135deg, var(--ion-color-danger), var(--ion-color-danger-tint));
+  --box-shadow: 0 4px 14px rgba(var(--ion-color-danger-rgb), 0.3), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+ion-button[color="danger"][fill="outline"] {
+  --border-color: var(--ion-color-danger);
+  --background: rgba(var(--ion-color-danger-rgb), 0.06);
+  --color: var(--ion-color-danger);
+}
+
+/* ── Chips ── */
+ion-chip {
+  font-weight: 500;
+}
+
+/* ── Toggles ── */
+ion-toggle {
+  --track-background: var(--ion-border-color, #e0e0e0);
+  --track-background-checked: var(--ion-color-primary);
+}
+
+/* ── Checkboxes ── */
+ion-checkbox {
+  --border-color: var(--ion-border-color, #d0d0d0);
+  --checkbox-background-checked: var(--ion-color-primary);
+  --checkmark-color: var(--ion-color-primary-contrast);
+}
+
+/* ── Radio Buttons ── */
+ion-radio {
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-color-primary);
+}
+
+/* ── Progress Bars ── */
+ion-progress-bar {
+  --border-radius: 4px;
+  --background: var(--ion-color-light);
+}
+
+/* ── Alerts & Modals ── */
+ion-alert .alert-wrapper {
+  --background: var(--ion-card-background, #fff);
+  border-radius: 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+ion-alert .alert-title {
+  color: var(--ion-text-color);
+  font-weight: 700;
+}
+
+ion-alert .alert-message {
+  color: var(--ion-color-medium);
+}
+
+ion-alert .alert-radio-label,
+ion-alert .alert-checkbox-label {
+  color: var(--ion-text-color) !important;
+}
+
+ion-alert .alert-radio-group,
+ion-alert .alert-checkbox-group {
+  border-color: var(--ion-border-color, #e0e0e0);
+}
+
+ion-alert .alert-button {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+}
+
+ion-alert input.alert-input {
+  color: var(--ion-text-color) !important;
+  border-color: var(--ion-border-color, #e0e0e0) !important;
+  border-radius: 10px !important;
+}
+
+/* ── Toast ── */
+ion-toast {
+  --border-radius: 14px;
+  --background: var(--ion-card-background, #fff);
+  --color: var(--ion-text-color);
+  --box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+  font-weight: 500;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Notes ── */
+ion-note {
+  color: var(--ion-color-medium);
+}
+
+/* ── Spinner ── */
+ion-spinner {
+  --color: var(--ion-color-primary);
+}
+
+/* ── Content background — subtle gradient ── */
+ion-content {
+  --background: var(--ion-background-color);
+
+  &::part(background) {
+    background: var(--theme-gradient-subtle, var(--ion-background-color));
+  }
+}
+
+/* ── Popover (for selects) ── */
+ion-popover {
+  --background: var(--ion-card-background, #fff);
+  --backdrop-opacity: 0.2;
+  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+ion-popover::part(content) {
+  border-radius: 16px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--ion-border-color, transparent);
+}
+
+ion-popover ion-item {
+  --background: transparent;
+  --color: var(--ion-text-color);
+}
+
+/* ── Action Sheet ── */
+ion-action-sheet .action-sheet-group {
+  background: var(--ion-card-background, #fff) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 16px !important;
+}
+
+ion-action-sheet .action-sheet-button {
+  color: var(--ion-text-color) !important;
+  font-weight: 500;
+}
+
+/* ── Loading ── */
+ion-loading .loading-wrapper {
+  --background: var(--ion-card-background, #fff);
+  --spinner-color: var(--ion-color-primary);
+  color: var(--ion-text-color);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Login modal: full-screen with no sheet rounding ── */
+.login-modal-fullscreen {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0;
+  --box-shadow: none;
+}
+
+/* ── Astra modal: bottom sheet ── */
+.astra-modal {
+  --height: 90%;
+  --border-radius: 20px 20px 0 0;
+  align-items: flex-end;
+}
+

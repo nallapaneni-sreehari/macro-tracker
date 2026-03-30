@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>MacroTracker</title>
+
+  <base href="/" />
+
+  <meta name="color-scheme" content="light" />
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <link rel="icon" type="image/svg+xml" href="assets/icon/macrotracker_app_logo.svg" />
+
+  <!-- add to homescreen for ios -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+</head>
+
+<body>
+  <script>
+    (function() {
+      var theme = localStorage.getItem('macro_tracker_theme') || 'aurora';
+      document.body.classList.add('theme-' + theme);
+    })();
+  </script>
+
+  <!-- Launch splash screen -->
+  <div id="app-splash">
+    <style>
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        background: #0f0e1a;
+        transition: opacity 0.45s ease, visibility 0.45s ease;
+      }
+      #app-splash.splash-hide {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      #app-splash img {
+        width: 100px;
+        height: 100px;
+        animation: splashPop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      #app-splash span {
+        margin-top: 18px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+        animation: splashFadeUp 0.5s 0.2s ease both;
+      }
+      #app-splash span em {
+        font-style: normal;
+        color: #6C5CE7;
+      }
+      @keyframes splashPop {
+        from { opacity: 0; transform: scale(0.55); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      @keyframes splashFadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+    <img src="assets/icon/macrotracker_app_logo.svg" alt="MacroTracker" />
+    <span>Macro<em>Tracker</em></span>
+  </div>
+
+  <app-root></app-root>
+
+  <script>
+    // Remove splash once Angular finishes bootstrapping
+    window.__removeSplash = function() {
+      var splash = document.getElementById('app-splash');
+      if (splash) {
+        splash.classList.add('splash-hide');
+        setTimeout(function() { splash.remove(); }, 460);
+      }
+    };
+  </script>
+</body>
+
+</html>

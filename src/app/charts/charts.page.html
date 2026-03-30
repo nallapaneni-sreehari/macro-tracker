@@ -1,0 +1,98 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Analytics</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Range Selector -->
+  <ion-segment [(ngModel)]="range" (ionChange)="onRangeChange()">
+    <ion-segment-button value="7">
+      <ion-label>7 Days</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="14">
+      <ion-label>14 Days</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="30">
+      <ion-label>30 Days</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
+  <!-- Quick Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-value">{{ totalDaysLogged }}</span>
+      <span class="stat-label">Days Logged</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ avgCalories }}</span>
+      <span class="stat-label">Avg Calories</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ daysOnGoal }}</span>
+      <span class="stat-label">On Target</span>
+    </div>
+  </div>
+
+  <!-- Calorie Chart -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="flame-outline" color="danger"></ion-icon>
+        Daily Calories
+      </ion-card-title>
+      <ion-card-subtitle>Dashed line = your {{ goals.calories }} cal goal</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-container">
+        <canvas #calorieChart></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Macro Trends Chart -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="trending-up-outline" color="primary"></ion-icon>
+        Macro Trends
+      </ion-card-title>
+      <ion-card-subtitle>Protein, Carbs & Fat over time</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-container">
+        <canvas #macroChart></canvas>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Macro Split Donut -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="pie-chart-outline" color="tertiary"></ion-icon>
+        Average Macro Split
+      </ion-card-title>
+      <ion-card-subtitle>Calorie distribution from macros</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chart-container donut">
+        <canvas #macroAvgChart></canvas>
+      </div>
+      <div class="macro-avg-row">
+        <div class="macro-avg">
+          <span class="avg-label">Protein</span>
+          <span class="avg-value success">{{ avgProtein }}g</span>
+        </div>
+        <div class="macro-avg">
+          <span class="avg-label">Carbs</span>
+          <span class="avg-value warning">{{ avgCarbs }}g</span>
+        </div>
+        <div class="macro-avg">
+          <span class="avg-label">Fat</span>
+          <span class="avg-value tertiary">{{ avgFat }}g</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

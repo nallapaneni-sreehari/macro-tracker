@@ -1,0 +1,96 @@
+<ion-content class="login-content">
+  <div class="login-wrap">
+
+    <!-- Brand -->
+    <div class="login-brand" [class.brand-up]="step === 2">
+      <img src="assets/icon/macrotracker_app_logo.svg" alt="MacroTracker" class="brand-logo" />
+      <h1 class="brand-name">Macro<span class="brand-accent">Tracker</span></h1>
+      <p class="brand-tagline">Know your fuel. Own your gains.</p>
+    </div>
+
+    <!-- Card -->
+    <div class="login-card">
+
+      <!-- ── Step 1: Email ── -->
+      <div class="step-pane" [class.step-visible]="step === 1" [class.step-hidden]="step !== 1">
+        <h2 class="step-title">Welcome back 👋</h2>
+        <p class="step-subtitle">Enter your email to sign in or create an account. We'll send you a one-time code.</p>
+
+        <div class="field-group">
+          <ion-item lines="none" class="field-item">
+            <ion-icon name="mail-outline" slot="start" class="field-icon"></ion-icon>
+            <ion-input
+              type="email"
+              placeholder="you@example.com"
+              [(ngModel)]="email"
+              inputmode="email"
+              autocomplete="email"
+              (keyup.enter)="sendOtp()"
+              class="field-input"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          class="primary-btn"
+          (click)="sendOtp()"
+          [disabled]="sending"
+        >
+          <ion-spinner *ngIf="sending" name="crescent" class="btn-spinner"></ion-spinner>
+          <span *ngIf="!sending">Send Code</span>
+        </ion-button>
+      </div>
+
+      <!-- ── Step 2: OTP ── -->
+      <div class="step-pane" [class.step-visible]="step === 2" [class.step-hidden]="step !== 2">
+        <h2 class="step-title">Check your inbox 📬</h2>
+        <p class="step-subtitle">
+          We sent a 6-digit code to<br />
+          <strong class="email-highlight">{{ email }}</strong>
+        </p>
+
+        <div class="field-group">
+          <ion-item lines="none" class="field-item otp-field">
+            <ion-icon name="key-outline" slot="start" class="field-icon"></ion-icon>
+            <ion-input
+              type="tel"
+              placeholder="000000"
+              [(ngModel)]="otp"
+              inputmode="numeric"
+              maxlength="6"
+              (keyup.enter)="verifyOtp()"
+              class="field-input otp-input"
+            ></ion-input>
+          </ion-item>
+        </div>
+
+        <ion-button
+          expand="block"
+          class="primary-btn"
+          (click)="verifyOtp()"
+          [disabled]="verifying"
+        >
+          <ion-spinner *ngIf="verifying" name="crescent" class="btn-spinner"></ion-spinner>
+          <span *ngIf="!verifying">Verify &amp; Sign In</span>
+        </ion-button>
+
+        <div class="step-actions">
+          <ion-button fill="clear" class="link-btn" (click)="backToEmail()">
+            <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+            Change email
+          </ion-button>
+          <ion-button fill="clear" class="link-btn" (click)="sendOtp()" [disabled]="sending">
+            Resend code
+          </ion-button>
+        </div>
+      </div>
+
+    </div><!-- /login-card -->
+
+    <p class="login-footer">
+      Your data syncs securely across devices.<br />No password stored — ever.
+    </p>
+
+  </div>
+</ion-content>
