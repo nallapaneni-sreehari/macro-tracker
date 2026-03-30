@@ -79,9 +79,9 @@ A full-featured, cross-platform nutrition tracking app built with **Ionic Angula
 macro-tracker/
 ├── src/
 │   ├── app/
-│   │   ├── tab1/            # Today — daily log & macro summary
-│   │   ├── tab2/            # History & meal templates
-│   │   ├── tab3/            # Goals
+│   │   ├── today/           # Today — daily log & macro summary
+│   │   ├── history/         # History & meal templates
+│   │   ├── goals/           # Goals
 │   │   ├── charts/          # Analytics & charts
 │   │   ├── settings/        # Profile & app settings
 │   │   ├── astra/           # Milo AI chat (modal)
