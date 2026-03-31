@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package in.iamsreehari.macrotracker;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, ToastController, LoadingController } from '@ionic/angular';
+import { AlertController, ToastController, LoadingController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { SettingsService } from '../services/settings.service';
 import { StorageService } from '../services/storage.service';
+import { LoginPage } from '../login/login.page';
 import {
   UserProfile,
   AppSettings,
@@ -44,7 +45,8 @@ export class SettingsPage implements OnInit, OnDestroy {
     private storageService: StorageService,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +79,34 @@ export class SettingsPage implements OnInit, OnDestroy {
     await this.settingsService.saveProfile(this.profile);
     await loading.dismiss();
     await this.showToast('Profile saved');
+  }
+
+  async logout(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Log Out',
+      message: 'Are you sure you want to log out? You will need to verify your email to sign back in.',
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Log Out',
+          role: 'destructive',
+          handler: async () => {
+            // Clear the stored email from both localStorage and Ionic Storage
+            localStorage.removeItem('macro_tracker_user_email');
+            await this.storageService.remove('macro_tracker_user_email');
+
+            // Show the login modal
+            const modal = await this.modalCtrl.create({
+              component: LoginPage,
+              backdropDismiss: false,
+              cssClass: 'login-modal-fullscreen',
+            });
+            await modal.present();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   // ── Theme ──

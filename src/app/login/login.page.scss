@@ -126,7 +126,7 @@ ion-content.login-content {
 
 .field-input {
   --color: var(--ion-text-color, #e2e0ff);
-  --placeholder-color: rgba(226, 224, 255, 0.3);
+  --placeholder-color: var(--ion-placeholder-color, rgba(226, 224, 255, 0.3));
   font-size: 15px;
 }
 
@@ -134,7 +134,7 @@ ion-content.login-content {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 6px;
-  --placeholder-color: rgba(226, 224, 255, 0.2);
+  --placeholder-color: var(--ion-placeholder-color, rgba(226, 224, 255, 0.2));
 }
 
 /* ── Buttons ── */
@@ -179,4 +179,18 @@ ion-content.login-content {
   line-height: 1.6;
   color: var(--ion-color-medium, rgba(226,224,255,0.35));
   margin: 0;
+}
+
+.privacy-notice {
+  font-size: 11px;
+  text-align: center;
+  color: var(--ion-color-medium, rgba(226,224,255,0.25));
+  margin: 8px 0 0;
+
+  .privacy-link {
+    color: var(--ion-color-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
 }

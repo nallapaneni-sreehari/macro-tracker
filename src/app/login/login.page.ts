@@ -3,6 +3,7 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { StorageService } from '../services/storage.service';
+import { MealService } from '../services/meal.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -24,6 +25,7 @@ export class LoginPage {
     private modalCtrl: ModalController,
     private toastCtrl: ToastController,
     private storageService: StorageService,
+    private mealService: MealService,
     private http: HttpClient,
   ) {}
 
@@ -63,6 +65,7 @@ export class LoginPage {
         }),
       );
       this.storageService.setUserEmail(this.email.trim().toLowerCase());
+      await this.mealService.reloadAfterLogin();
       await this.toast('Welcome to MacroTracker! 🎉', 'success');
       await this.modalCtrl.dismiss({ success: true });
     } catch (err: any) {

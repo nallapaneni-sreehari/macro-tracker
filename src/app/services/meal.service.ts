@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { StorageService } from './storage.service';
 import {
   DailyLog,
@@ -11,6 +12,7 @@ import {
   generateId,
   getTodayKey,
 } from '../models/nutrition.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MealService {
@@ -23,13 +25,29 @@ export class MealService {
   currentLog$ = new BehaviorSubject<DailyLog | null>(null);
   goals$ = new BehaviorSubject<MacroGoals>(DEFAULT_GOALS);
 
-  constructor(private storage: StorageService) {
+  constructor(private storage: StorageService, private http: HttpClient) {
     this.init();
   }
 
   private async init(): Promise<void> {
-    const goals = await this.storage.get<MacroGoals>(this.GOALS_KEY);
-    if (goals) this.goals$.next(goals);
+    // Load local goals immediately so UI is not blocked
+    const localGoals = await this.storage.get<MacroGoals>(this.GOALS_KEY);
+    if (localGoals) this.goals$.next(localGoals);
+
+    // Fetch server goals (survives reinstall); server wins if present
+    const email = this.storage.getUserEmail();
+    if (email) {
+      try {
+        const res = await firstValueFrom(
+          this.http.get<{ value: MacroGoals | null }>(`${environment.apiUrl}/storage/${encodeURIComponent(email)}/macro_goals`)
+        );
+        if (res?.value) {
+          this.goals$.next(res.value);
+          await this.storage.set(this.GOALS_KEY, res.value);
+        }
+      } catch { /* offline — local value already applied */ }
+    }
+
     await this.loadDay(getTodayKey());
   }
 
@@ -128,9 +146,36 @@ export class MealService {
 
   // ── Goals ──
 
+  /** Call this after login so goals + today's log are fetched now that email is known. */
+  async reloadAfterLogin(): Promise<void> {
+    const email = this.storage.getUserEmail();
+    if (email) {
+      try {
+        const res = await firstValueFrom(
+          this.http.get<{ value: MacroGoals | null }>(`${environment.apiUrl}/storage/${encodeURIComponent(email)}/macro_goals`)
+        );
+        if (res?.value) {
+          this.goals$.next(res.value);
+          await this.storage.set(this.GOALS_KEY, res.value);
+        }
+      } catch { /* offline */ }
+    }
+    await this.loadDay(getTodayKey());
+  }
+
   async saveGoals(goals: MacroGoals): Promise<void> {
     await this.storage.set(this.GOALS_KEY, goals);
     this.goals$.next(goals);
+
+    // Persist to server so goals survive app reinstall
+    const email = this.storage.getUserEmail();
+    if (email) {
+      try {
+        await firstValueFrom(
+          this.http.put(`${environment.apiUrl}/storage/${encodeURIComponent(email)}/macro_goals`, { value: goals })
+        );
+      } catch { /* offline — already saved locally */ }
+    }
   }
 
   // ── Templates ──

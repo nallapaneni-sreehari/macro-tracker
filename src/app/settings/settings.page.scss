@@ -124,6 +124,13 @@ ion-card-content > ion-button + ion-button {
 }
 
 /* ── App Info ── */
+.logout-note {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  text-align: center;
+  margin: 8px 0 0;
+}
+
 .app-info-card {
   .app-info {
     text-align: center;

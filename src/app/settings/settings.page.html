@@ -197,6 +197,23 @@
     </ion-card-content>
   </ion-card>
 
+  <!-- Account -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        Account
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" fill="outline" color="danger" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Log Out
+      </ion-button>
+      <p class="logout-note">You'll be asked to verify your email again to sign back in.</p>
+    </ion-card-content>
+  </ion-card>
+
   <!-- App Info -->
   <ion-card class="app-info-card">
     <ion-card-content>
