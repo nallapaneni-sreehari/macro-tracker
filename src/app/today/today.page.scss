@@ -155,6 +155,8 @@
   border: 1px solid rgba(var(--ion-color-primary-rgb), 0.10);
   border-radius: 14px;
   padding: 12px 12px 10px;
+  min-width: 0; // prevent grid blowout
+  overflow: hidden;
 }
 
 .macro-tile-top {
@@ -208,6 +210,7 @@
   font-size: 15px;
   font-weight: 800;
   color: var(--ion-text-color);
+  flex-shrink: 0;
 }
 
 .mtv-sep, .mtv-goal {
