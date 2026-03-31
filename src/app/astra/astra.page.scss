@@ -4,6 +4,17 @@ ion-toolbar {
   --border-width: 0;
 }
 
+ion-header {
+  ion-button[fill="clear"] {
+    --color: var(--ion-text-color);
+    --color-hover: var(--ion-color-primary);
+
+    ion-icon {
+      font-size: 22px;
+    }
+  }
+}
+
 .astra-title {
   display: flex;
   align-items: center;

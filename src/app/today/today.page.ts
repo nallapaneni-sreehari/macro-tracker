@@ -335,4 +335,17 @@ export class TodayPage implements OnInit, OnDestroy {
   get totalMeals(): number {
     return this.log?.meals.length || 0;
   }
+
+  get caloriesLeft(): number {
+    return Math.max(0, this.goals.calories - this.dailyMacros.calories);
+  }
+
+  get caloriesOver(): boolean {
+    return this.dailyMacros.calories > this.goals.calories;
+  }
+
+  /** SVG ring dashoffset for calorie progress (circumference = 2π×54 ≈ 339) */
+  ringOffset(pct: number): number {
+    return 339 - Math.min(pct, 100) / 100 * 339;
+  }
 }

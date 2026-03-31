@@ -4,6 +4,16 @@
   </ion-toolbar>
 </ion-header>
 
+<!-- SVG defs for calorie ring gradient (hidden, reused by ring) -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="calorieGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#e17055" />
+      <stop offset="100%" stop-color="#fdcb6e" />
+    </linearGradient>
+  </defs>
+</svg>
+
 <ion-content [fullscreen]="true">
   <!-- Date Picker -->
   <div class="date-bar">
@@ -20,84 +30,132 @@
   </div>
 
   <!-- Daily Macro Summary -->
-  <ion-card class="macro-summary-card" *ngIf="log">
-    <ion-card-header>
-      <ion-card-title>Daily Summary</ion-card-title>
-      <ion-card-subtitle>
-        {{ completedMeals }}/{{ totalMeals }} meals completed
-      </ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content>
-      <!-- Calories -->
-      <div class="macro-row">
-        <div class="macro-label">
-          <ion-icon name="flame-outline" color="danger"></ion-icon>
-          <span>Calories</span>
-        </div>
-        <div class="macro-values">
-          <span class="current">{{ dailyMacros.calories | number:'1.0-0' }}</span>
-          <span class="separator">/</span>
-          <span class="goal">{{ goals.calories }}</span>
-        </div>
+  <div class="summary-card" *ngIf="log">
+
+    <!-- Header row -->
+    <div class="summary-header">
+      <div>
+        <h2 class="summary-title">Today's Macros</h2>
+        <p class="summary-sub">{{ completedMeals }}/{{ totalMeals }} meals completed</p>
       </div>
-      <ion-progress-bar [value]="macroPercent(dailyMacros.calories, goals.calories) / 100" color="danger"></ion-progress-bar>
+      <div class="status-badge"
+           [class.badge-success]="macroPercent(dailyMacros.calories, goals.calories) >= 80"
+           [class.badge-warning]="macroPercent(dailyMacros.calories, goals.calories) >= 50 && macroPercent(dailyMacros.calories, goals.calories) < 80"
+           [class.badge-info]="macroPercent(dailyMacros.calories, goals.calories) < 50">
+        <ion-icon [name]="macroPercent(dailyMacros.calories, goals.calories) >= 80 ? 'checkmark-circle' : 'time-outline'"></ion-icon>
+        <span>{{ macroPercent(dailyMacros.calories, goals.calories) >= 80 ? 'On Track' : 'In Progress' }}</span>
+      </div>
+    </div>
+
+    <!-- Calorie ring -->
+    <div class="calorie-ring-wrap">
+      <svg class="calorie-ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring-track" cx="60" cy="60" r="54" />
+        <circle class="ring-fill" cx="60" cy="60" r="54"
+          [class.ring-over]="caloriesOver"
+          stroke-dasharray="339 339"
+          [attr.stroke-dashoffset]="ringOffset(macroPercent(dailyMacros.calories, goals.calories))"
+        />
+      </svg>
+      <div class="ring-center">
+        <span class="ring-value">{{ dailyMacros.calories | number:'1.0-0' }}</span>
+        <span class="ring-unit">kcal</span>
+        <span class="ring-remaining" [class.ring-over-text]="caloriesOver">
+          {{ caloriesOver ? 'Over goal' : (caloriesLeft | number:'1.0-0') + ' left' }}
+        </span>
+        <span class="ring-goal-label">Goal: {{ goals.calories }}</span>
+      </div>
+    </div>
+
+    <!-- Macro grid -->
+    <div class="macro-grid">
 
       <!-- Protein -->
-      <div class="macro-row">
-        <div class="macro-label">
-          <ion-icon name="fish-outline" color="success"></ion-icon>
-          <span>Protein</span>
+      <div class="macro-tile">
+        <div class="macro-tile-top">
+          <span class="macro-icon-wrap protein-wrap">
+            <ion-icon name="fish-outline"></ion-icon>
+          </span>
+          <div class="macro-tile-info">
+            <span class="macro-tile-name">Protein</span>
+            <span class="macro-tile-values">
+              <span class="mtv-cur">{{ dailyMacros.protein | number:'1.0-0' }}g</span>
+              <span class="mtv-sep">/</span>
+              <span class="mtv-goal">{{ goals.protein }}g</span>
+            </span>
+          </div>
+          <span class="macro-pct protein-pct">{{ macroPercent(dailyMacros.protein, goals.protein) }}%</span>
         </div>
-        <div class="macro-values">
-          <span class="current">{{ dailyMacros.protein | number:'1.0-1' }}g</span>
-          <span class="separator">/</span>
-          <span class="goal">{{ goals.protein }}g</span>
+        <div class="macro-bar-track">
+          <div class="macro-bar-fill protein-fill" [style.width.%]="macroPercent(dailyMacros.protein, goals.protein)"></div>
         </div>
       </div>
-      <ion-progress-bar [value]="macroPercent(dailyMacros.protein, goals.protein) / 100" color="success"></ion-progress-bar>
 
       <!-- Carbs -->
-      <div class="macro-row">
-        <div class="macro-label">
-          <ion-icon style="transform: rotate(215deg)" name="pizza-outline" color="warning"></ion-icon>
-          <span>Carbs</span>
+      <div class="macro-tile">
+        <div class="macro-tile-top">
+          <span class="macro-icon-wrap carbs-wrap">
+            <ion-icon name="pizza-outline"></ion-icon>
+          </span>
+          <div class="macro-tile-info">
+            <span class="macro-tile-name">Carbs</span>
+            <span class="macro-tile-values">
+              <span class="mtv-cur">{{ dailyMacros.carbs | number:'1.0-0' }}g</span>
+              <span class="mtv-sep">/</span>
+              <span class="mtv-goal">{{ goals.carbs }}g</span>
+            </span>
+          </div>
+          <span class="macro-pct carbs-pct">{{ macroPercent(dailyMacros.carbs, goals.carbs) }}%</span>
         </div>
-        <div class="macro-values">
-          <span class="current">{{ dailyMacros.carbs | number:'1.0-1' }}g</span>
-          <span class="separator">/</span>
-          <span class="goal">{{ goals.carbs }}g</span>
+        <div class="macro-bar-track">
+          <div class="macro-bar-fill carbs-fill" [style.width.%]="macroPercent(dailyMacros.carbs, goals.carbs)"></div>
         </div>
       </div>
-      <ion-progress-bar [value]="macroPercent(dailyMacros.carbs, goals.carbs) / 100" color="warning"></ion-progress-bar>
+
       <!-- Fat -->
-      <div class="macro-row">
-        <div class="macro-label">
-          <ion-icon name="water-outline" color="tertiary"></ion-icon>
-          <span>Fat</span>
+      <div class="macro-tile">
+        <div class="macro-tile-top">
+          <span class="macro-icon-wrap fat-wrap">
+            <ion-icon name="water-outline"></ion-icon>
+          </span>
+          <div class="macro-tile-info">
+            <span class="macro-tile-name">Fat</span>
+            <span class="macro-tile-values">
+              <span class="mtv-cur">{{ dailyMacros.fat | number:'1.0-0' }}g</span>
+              <span class="mtv-sep">/</span>
+              <span class="mtv-goal">{{ goals.fat }}g</span>
+            </span>
+          </div>
+          <span class="macro-pct fat-pct">{{ macroPercent(dailyMacros.fat, goals.fat) }}%</span>
         </div>
-        <div class="macro-values">
-          <span class="current">{{ dailyMacros.fat | number:'1.0-1' }}g</span>
-          <span class="separator">/</span>
-          <span class="goal">{{ goals.fat }}g</span>
+        <div class="macro-bar-track">
+          <div class="macro-bar-fill fat-fill" [style.width.%]="macroPercent(dailyMacros.fat, goals.fat)"></div>
         </div>
       </div>
-      <ion-progress-bar [value]="macroPercent(dailyMacros.fat, goals.fat) / 100" color="tertiary"></ion-progress-bar>
-    
+
       <!-- Fiber -->
-        <div class="macro-row">
-          <div class="macro-label">
-            <ion-icon name="leaf-outline" color="success"></ion-icon>
-            <span>Fiber</span>
+      <div class="macro-tile">
+        <div class="macro-tile-top">
+          <span class="macro-icon-wrap fiber-wrap">
+            <ion-icon name="leaf-outline"></ion-icon>
+          </span>
+          <div class="macro-tile-info">
+            <span class="macro-tile-name">Fiber</span>
+            <span class="macro-tile-values">
+              <span class="mtv-cur">{{ dailyMacros.fiber | number:'1.0-0' }}g</span>
+              <span class="mtv-sep">/</span>
+              <span class="mtv-goal">{{ goals.fiber }}g</span>
+            </span>
           </div>
-          <div class="macro-values">
-            <span class="current">{{ dailyMacros.fiber | number:'1.0-1' }}g</span>
-            <span class="separator">/</span>
-            <span class="goal">{{ goals.fiber }}g</span>
-          </div>
+          <span class="macro-pct fiber-pct">{{ macroPercent(dailyMacros.fiber ?? 0, goals.fiber ?? 0) }}%</span>
         </div>
-        <ion-progress-bar [value]="macroPercent(dailyMacros.fiber ?? 0, goals.fiber ?? 0) / 100" color="success"></ion-progress-bar>
-    </ion-card-content>
-  </ion-card>
+        <div class="macro-bar-track">
+          <div class="macro-bar-fill fiber-fill" [style.width.%]="macroPercent(dailyMacros.fiber ?? 0, goals.fiber ?? 0)"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Water Intake -->
   <ion-card class="water-card" *ngIf="log">

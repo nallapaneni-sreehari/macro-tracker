@@ -6,55 +6,249 @@
   gap: 4px;
 }
 
-.macro-summary-card {
-  margin: 8px 16px;
+// ── Summary card ──────────────────────────────────────────────────────────────
+.summary-card {
+  margin: 8px 16px 12px;
+  padding: 20px;
+  background: var(--ion-card-background);
+  border-radius: 20px;
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.12);
+}
 
-  .macro-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 12px;
-    margin-bottom: 4px;
+// Header row
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
 
-    &:first-child {
-      margin-top: 0;
-    }
+.summary-title {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 2px;
+  color: var(--ion-text-color);
+}
+
+.summary-sub {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+// Status badge
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  ion-icon { font-size: 13px; }
+
+  &.badge-info {
+    background: rgba(var(--ion-color-primary-rgb), 0.12);
+    color: var(--ion-color-primary);
   }
-
-  .macro-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-
-    ion-icon {
-      font-size: 18px;
-    }
+  &.badge-warning {
+    background: rgba(var(--ion-color-warning-rgb), 0.15);
+    color: var(--ion-color-warning-shade);
   }
-
-  .macro-values {
-    font-size: 14px;
-
-    .current {
-      font-weight: 600;
-    }
-
-    .separator {
-      margin: 0 2px;
-      color: var(--ion-color-medium);
-    }
-
-    .goal {
-      color: var(--ion-color-medium);
-    }
-  }
-
-  ion-progress-bar {
-    border-radius: 4px;
-    height: 6px;
-    margin-bottom: 4px;
+  &.badge-success {
+    background: rgba(var(--ion-color-success-rgb), 0.15);
+    color: var(--ion-color-success-shade);
   }
 }
+
+// ── Calorie ring ──────────────────────────────────────────────────────────────
+.calorie-ring-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 24px;
+}
+
+.calorie-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+
+  .ring-track {
+    fill: none;
+    stroke: rgba(var(--ion-color-primary-rgb), 0.10);
+    stroke-width: 10;
+    stroke-linecap: round;
+  }
+
+  .ring-fill {
+    fill: none;
+    stroke: url(#calorieGrad);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.7s cubic-bezier(.4, 0, .2, 1);
+
+    &.ring-over {
+      stroke: var(--ion-color-danger);
+    }
+  }
+}
+
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+.ring-value {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--ion-text-color);
+  letter-spacing: -1px;
+}
+
+.ring-unit {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  margin-top: 1px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ring-remaining {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin-top: 4px;
+
+  &.ring-over-text { color: var(--ion-color-danger); }
+}
+
+.ring-goal-label {
+  font-size: 10px;
+  color: var(--ion-color-medium);
+  margin-top: 1px;
+}
+
+// ── Macro grid ────────────────────────────────────────────────────────────────
+.macro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+
+  @media (min-width: 400px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.macro-tile {
+  background: rgba(var(--ion-color-primary-rgb), 0.05);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.10);
+  border-radius: 14px;
+  padding: 12px 12px 10px;
+}
+
+.macro-tile-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+// Icon pill
+.macro-icon-wrap {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon { font-size: 15px; color: #fff; }
+
+  &.protein-wrap { background: linear-gradient(135deg, #00b894, #00cec9); }
+  &.carbs-wrap   { background: linear-gradient(135deg, #fdcb6e, #e17055); }
+  &.fat-wrap     { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+  &.fiber-wrap   { background: linear-gradient(135deg, #55efc4, #00b894); }
+}
+
+.macro-tile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.macro-tile-name {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.macro-tile-values {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.mtv-cur {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ion-text-color);
+}
+
+.mtv-sep, .mtv-goal {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+// % badge
+.macro-pct {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 8px;
+  flex-shrink: 0;
+
+  &.protein-pct { background: rgba(0, 184, 148, 0.15); color: #00b894; }
+  &.carbs-pct   { background: rgba(253, 203, 110, 0.2); color: #c5880a; }
+  &.fat-pct     { background: rgba(108, 92, 231, 0.15); color: #6c5ce7; }
+  &.fiber-pct   { background: rgba(85, 239, 196, 0.2);  color: #00a381; }
+}
+
+// Progress bar
+.macro-bar-track {
+  height: 5px;
+  background: rgba(var(--ion-color-primary-rgb), 0.10);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.macro-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(.4, 0, .2, 1);
+  max-width: 100%;
+
+  &.protein-fill { background: linear-gradient(90deg, #00b894, #00cec9); }
+  &.carbs-fill   { background: linear-gradient(90deg, #fdcb6e, #e17055); }
+  &.fat-fill     { background: linear-gradient(90deg, #a29bfe, #6c5ce7); }
+  &.fiber-fill   { background: linear-gradient(90deg, #55efc4, #00b894); }
+}
+
 
 .water-card {
   margin: 8px 16px;
