@@ -1,4 +1,5 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MealService } from './meal.service';
 import { StorageService } from './storage.service';
 import { DEFAULT_GOALS, FoodItem, MacroGoals, Meal, MealTemplate } from '../models/nutrition.model';
@@ -12,7 +13,7 @@ const storageMock: Partial<StorageService> = {
     Promise.resolve<T | null>(store[key] ?? null)
   ),
   set: jasmine.createSpy('set').and.callFake((key: string, value: any) => {
-    store[key] = value;
+    store[key] = JSON.parse(JSON.stringify(value));
     return Promise.resolve();
   }),
   remove: jasmine.createSpy('remove').and.callFake((key: string) => {
@@ -22,6 +23,9 @@ const storageMock: Partial<StorageService> = {
   keys: jasmine.createSpy('keys').and.callFake(() =>
     Promise.resolve(Object.keys(store))
   ),
+  // Return null so MealService skips the server-fetch branch in unit tests
+  getUserEmail: jasmine.createSpy('getUserEmail').and.returnValue(null),
+  setUserEmail: jasmine.createSpy('setUserEmail'),
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -51,11 +55,13 @@ describe('MealService', () => {
       Promise.resolve<T | null>(store[key] ?? null)
     );
     (storageMock.set as jasmine.Spy).and.callFake((key: string, value: any) => {
-      store[key] = value;
+      store[key] = JSON.parse(JSON.stringify(value));
       return Promise.resolve();
     });
+    (storageMock.getUserEmail as jasmine.Spy).and.returnValue(null);
 
     TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
       providers: [
         MealService,
         { provide: StorageService, useValue: storageMock },
@@ -80,6 +86,7 @@ describe('MealService', () => {
       // Re-create service with pre-seeded store
       TestBed.resetTestingModule();
       TestBed.configureTestingModule({
+        imports: [HttpClientTestingModule],
         providers: [
           MealService,
           { provide: StorageService, useValue: storageMock },

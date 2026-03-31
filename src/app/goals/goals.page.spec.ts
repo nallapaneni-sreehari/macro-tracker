@@ -84,7 +84,7 @@ describe('GoalsPage', () => {
     it('shows a success toast after saving', fakeAsync(async () => {
       await component.saveGoals();
       tick();
-      expect(toastMock.present).toHaveBeenCalled();
+      expect(toastServiceMock.success).toHaveBeenCalled();
     }));
   });
 
