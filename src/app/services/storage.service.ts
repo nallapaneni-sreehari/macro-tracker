@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Storage } from '@ionic/storage-angular';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 const USER_EMAIL_KEY = 'macro_tracker_user_email';
@@ -10,6 +10,9 @@ const USER_EMAIL_KEY = 'macro_tracker_user_email';
 export class StorageService {
   private _storage: Storage | null = null;
   private apiUrl = `${environment.apiUrl}/storage`;
+
+  /** Emits false when server is unreachable, true when reachable. */
+  serverReachable$ = new BehaviorSubject<boolean>(true);
 
   constructor(private http: HttpClient, private storage: Storage) {}
 
@@ -50,6 +53,7 @@ export class StorageService {
         const res = await firstValueFrom(
           this.http.get<{ value: T | null }>(`${this.apiUrl}/${encodeURIComponent(userId)}/${encodeURIComponent(key)}`)
         );
+        this.serverReachable$.next(true);
         if (res.value !== null && res.value !== undefined) {
           // Refresh local cache so offline reads are up to date
           await this.initLocal();
@@ -57,7 +61,8 @@ export class StorageService {
           return res.value;
         }
         // DB has no value — fall through to local (handles migration from local-only installs)
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.status === 0) this.serverReachable$.next(false);
         console.warn(`[Storage] DB get failed for "${key}", using local:`, err);
       }
     }
@@ -77,7 +82,9 @@ export class StorageService {
         await firstValueFrom(
           this.http.put(`${this.apiUrl}/${encodeURIComponent(userId)}/${encodeURIComponent(key)}`, { value })
         );
-      } catch (err) {
+        this.serverReachable$.next(true);
+      } catch (err: any) {
+        if (err?.status === 0) this.serverReachable$.next(false);
         console.warn(`[Storage] DB set failed for "${key}", data saved locally only:`, err);
       }
     }

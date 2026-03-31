@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, ToastController, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { SettingsService } from '../services/settings.service';
 import { StorageService } from '../services/storage.service';
+import { ToastService } from '../services/toast.service';
 import { LoginPage } from '../login/login.page';
 import {
   UserProfile,
@@ -44,7 +45,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     private settingsService: SettingsService,
     private storageService: StorageService,
     private alertCtrl: AlertController,
-    private toastCtrl: ToastController,
+    private toastService: ToastService,
     private loadingCtrl: LoadingController,
     private modalCtrl: ModalController
   ) {}
@@ -70,7 +71,7 @@ export class SettingsPage implements OnInit, OnDestroy {
   async saveProfile(): Promise<void> {
     const email = (this.profile.email || '').trim();
     if (!email || !email.includes('@')) {
-      await this.showToast('Please enter a valid email');
+      this.toastService.warning('Please enter a valid email');
       return;
     }
     const loading = await this.loadingCtrl.create({ message: 'Saving profile...', duration: 5000 });
@@ -78,7 +79,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     this.storageService.setUserEmail(email);
     await this.settingsService.saveProfile(this.profile);
     await loading.dismiss();
-    await this.showToast('Profile saved');
+    this.showToast('Profile saved');
   }
 
   async logout(): Promise<void> {
@@ -124,7 +125,7 @@ export class SettingsPage implements OnInit, OnDestroy {
 
   async saveSettings(): Promise<void> {
     await this.settingsService.saveSettings(this.settings);
-    await this.showToast('Settings saved');
+    this.showToast('Settings saved');
   }
 
   isDefaultMeal(meal: string): boolean {
@@ -153,7 +154,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     a.download = `macrotracker-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    await this.showToast('Data exported');
+    this.showToast('Data exported');
   }
 
   async clearAllData(): Promise<void> {
@@ -170,7 +171,7 @@ export class SettingsPage implements OnInit, OnDestroy {
             await loading.present();
             await this.settingsService.clearAllData();
             await loading.dismiss();
-            await this.showToast('All data cleared');
+            this.showToast('All data cleared');
           },
         },
       ],
@@ -209,14 +210,7 @@ export class SettingsPage implements OnInit, OnDestroy {
     return Math.round(this.estimatedBMR * multipliers[this.profile.activityLevel]);
   }
 
-  private async showToast(message: string): Promise<void> {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 1500,
-      position: 'bottom',
-      color: 'success',
-      icon: 'checkmark-circle-outline',
-    });
-    await toast.present();
+  private showToast(message: string): void {
+    this.toastService.success(message);
   }
 }

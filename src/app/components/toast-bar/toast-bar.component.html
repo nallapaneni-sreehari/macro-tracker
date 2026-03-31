@@ -1,0 +1,27 @@
+<div class="toast-stack">
+  <div
+    *ngFor="let t of toasts; trackBy: trackById"
+    class="toast-card"
+    [class]="'toast-' + t.variant"
+    [class.toast-exit]="t.dismissing"
+  >
+    <div class="toast-stripe"></div>
+
+    <div class="toast-icon-wrap">
+      <ion-icon [name]="iconFor(t.variant)" class="toast-icon"></ion-icon>
+    </div>
+
+    <span class="toast-message">{{ t.message }}</span>
+
+    <button class="toast-close" (click)="dismiss(t.id)" aria-label="Dismiss">
+      <ion-icon name="close"></ion-icon>
+    </button>
+
+    <div class="toast-progress" *ngIf="t.duration > 0">
+      <div
+        class="toast-progress-bar"
+        [style.animation-duration.ms]="t.duration"
+      ></div>
+    </div>
+  </div>
+</div>

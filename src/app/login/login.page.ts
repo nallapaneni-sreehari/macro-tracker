@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { ModalController, ToastController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { StorageService } from '../services/storage.service';
 import { MealService } from '../services/meal.service';
+import { ToastService } from '../services/toast.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -23,16 +24,16 @@ export class LoginPage {
 
   constructor(
     private modalCtrl: ModalController,
-    private toastCtrl: ToastController,
     private storageService: StorageService,
     private mealService: MealService,
+    private toastService: ToastService,
     private http: HttpClient,
   ) {}
 
   async sendOtp(): Promise<void> {
     const email = this.email.trim().toLowerCase();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      await this.toast('Please enter a valid email address.', 'warning');
+      this.toastService.warning('Please enter a valid email address.');
       return;
     }
     this.sending = true;
@@ -42,9 +43,9 @@ export class LoginPage {
       );
       this.step = 2;
       this.otp = '';
-      await this.toast('Code sent! Check your inbox.', 'success');
+      this.toastService.success('Code sent! Check your inbox.');
     } catch (err: any) {
-      await this.toast(err?.error?.error || 'Failed to send code. Try again.', 'danger');
+      this.toastService.error(err?.error?.error || 'Failed to send code. Try again.');
     } finally {
       this.sending = false;
     }
@@ -53,7 +54,7 @@ export class LoginPage {
   async verifyOtp(): Promise<void> {
     const otp = String(this.otp).trim();
     if (!otp || otp.length !== 6) {
-      await this.toast('Enter the 6-digit code from your email.', 'warning');
+      this.toastService.warning('Enter the 6-digit code from your email.');
       return;
     }
     this.verifying = true;
@@ -66,10 +67,10 @@ export class LoginPage {
       );
       this.storageService.setUserEmail(this.email.trim().toLowerCase());
       await this.mealService.reloadAfterLogin();
-      await this.toast('Welcome to MacroTracker! 🎉', 'success');
+      this.toastService.success('Welcome to MacroTracker! 🎉');
       await this.modalCtrl.dismiss({ success: true });
     } catch (err: any) {
-      await this.toast(err?.error?.error || 'Invalid or expired code.', 'danger');
+      this.toastService.error(err?.error?.error || 'Invalid or expired code.');
     } finally {
       this.verifying = false;
     }
@@ -78,10 +79,5 @@ export class LoginPage {
   backToEmail(): void {
     this.step = 1;
     this.otp = '';
-  }
-
-  private async toast(message: string, color: string): Promise<void> {
-    const t = await this.toastCtrl.create({ message, duration: 3500, color, position: 'bottom' });
-    await t.present();
   }
 }

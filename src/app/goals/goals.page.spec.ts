@@ -1,10 +1,11 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
+import { IonicModule, LoadingController } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 import { GoalsPage } from './goals.page';
 import { MealService } from '../services/meal.service';
+import { ToastService } from '../services/toast.service';
 import { MacroGoals, DEFAULT_GOALS } from '../models/nutrition.model';
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
@@ -21,8 +22,10 @@ const loadingMock = {
   dismiss: jasmine.createSpy('dismiss').and.returnValue(Promise.resolve()),
 };
 
-const toastMock = {
-  present: jasmine.createSpy('present').and.returnValue(Promise.resolve()),
+const toastServiceMock = {
+  success: jasmine.createSpy('success'),
+  error: jasmine.createSpy('error'),
+  warning: jasmine.createSpy('warning'),
 };
 
 // ─── Suite ───────────────────────────────────────────────────────────────────
@@ -44,10 +47,7 @@ describe('GoalsPage', () => {
           provide: LoadingController,
           useValue: { create: jasmine.createSpy().and.returnValue(Promise.resolve(loadingMock)) },
         },
-        {
-          provide: ToastController,
-          useValue: { create: jasmine.createSpy().and.returnValue(Promise.resolve(toastMock)) },
-        },
+        { provide: ToastService, useValue: toastServiceMock },
       ],
     }).compileComponents();
 
