@@ -397,11 +397,14 @@ The project includes a `deploy.ps1` script that automates the full pipeline:
 
 2. Set the required environment variables. Add these to your PowerShell profile (`$PROFILE`) so they persist across sessions:
    ```powershell
-   $env:DEPLOY_DOCKER_IMAGE  = "r151149/macro-tracker"          # Docker Hub image name
+   $env:DEPLOY_DOCKER_IMAGE  = "youruser/macro-tracker"         # Docker Hub image name
    $env:DEPLOY_SERVER        = "user@your-server.com"           # SSH target
    $env:DEPLOY_COMPOSE_FILE  = "/path/to/docker-compose.yml"   # Path to compose file on VM
+   # Optional — defaults to linux/arm64 if not set:
+   $env:DEPLOY_PLATFORM      = "linux/amd64"                    # linux/arm64 | linux/amd64
+   $env:DEPLOY_SSH_KEY       = "C:\path\to\key"                 # defaults to ~/.ssh/id_ed25519_deploy
    ```
-   The script will exit with a clear error if any of these are missing.
+   `DEPLOY_DOCKER_IMAGE`, `DEPLOY_SERVER`, and `DEPLOY_COMPOSE_FILE` are required — the script will exit with a clear error if any are missing.
 
 3. Set up SSH key auth to avoid password prompts on every deploy:
    ```powershell
