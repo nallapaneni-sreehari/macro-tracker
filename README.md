@@ -101,7 +101,7 @@ macro-tracker/
 │   ├── global.scss
 │   └── index.html           # Splash screen
 ├── android/                 # Capacitor Android project
-├── server/                  # Backend (excluded from this repo)
+├── macros-tracker-server/   # Backend (git submodule → nallapaneni-sreehari/macros-tracker-server)
 ├── angular.json
 ├── capacitor.config.ts
 └── package.json
@@ -118,23 +118,36 @@ Make sure you have these installed:
 - **Angular CLI** — `npm install -g @angular/cli`
 - **Ionic CLI** — `npm install -g @ionic/cli`
 - **Capacitor CLI** — `npm install -g @capacitor/cli`
+- **Git** ≥ 2.13 (submodule support)
 
 For Android builds:
 - **Android Studio** — [developer.android.com/studio](https://developer.android.com/studio)
 - **Java 17+** (bundled with Android Studio)
+
+For deployment:
+- **Docker Desktop** — [docker.com](https://www.docker.com/products/docker-desktop/)
+- A Docker Hub account logged in (`docker login`)
 
 ---
 
 ## 🚀 Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/macro-tracker.git
+# Clone the repository with the server submodule
+git clone --recurse-submodules https://github.com/nallapaneni-sreehari/macro-tracker.git
 cd macro-tracker
 
-# Install dependencies
+# Install app dependencies
 npm install
+
+# Install server dependencies
+cd macros-tracker-server && npm install && cd ..
 ```
+
+> If you already cloned without `--recurse-submodules`, run:
+> ```bash
+> git submodule update --init --recursive
+> ```
 
 ### Configure API URL
 
@@ -143,7 +156,7 @@ Edit `src/environments/environment.ts` to point to your server:
 ```ts
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api'   // local dev
+  apiUrl: 'http://localhost:2727/api'   // local dev
 };
 ```
 
@@ -186,12 +199,26 @@ npm run build
 
 # Sync to Android project
 npx cap sync android
-
-# Open in Android Studio
-npx cap open android
 ```
 
-Then in Android Studio: **Build → Generate Signed Bundle / APK**
+#### Option A — Command line (debug APK)
+
+```bash
+# Windows
+cd android && ./gradlew.bat assembleDebug
+
+# Linux / macOS
+cd android && ./gradlew assembleDebug
+```
+
+Output APK: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+#### Option B — Android Studio (release / signed APK)
+
+1. Open the `android/` folder in Android Studio
+2. Go to **Build → Generate Signed Bundle / APK**
+3. Choose **APK**, select your keystore, and follow the wizard
+4. Output lands in `android/app/release/`
 
 ---
 
@@ -339,7 +366,7 @@ Milo is a context-aware AI nutrition assistant available from the **home screen 
 
 ## 🔑 Environment Variables
 
-The server requires a `.env` file (see `server/` directory):
+The server requires a `.env` file inside `macros-tracker-server/`:
 
 ```env
 MONGO_URI=mongodb+srv://...
@@ -349,10 +376,48 @@ SMTP_PORT=587
 SMTP_USER=your@gmail.com
 SMTP_PASS=your-app-password
 SMTP_FROM=your@gmail.com
-PORT=3000
+PORT=2727
 ```
 
 > ⚠️ Never commit `.env` files — they are excluded by `.gitignore`
+
+---
+
+## 🚢 Deployment
+
+The project includes a `deploy.ps1` script that automates the full pipeline:
+**Angular build → Docker build → Push to Docker Hub → Pull & restart on VM**
+
+### One-time setup
+
+1. Log in to Docker Hub:
+   ```powershell
+   docker login
+   ```
+
+2. Set the required environment variables. Add these to your PowerShell profile (`$PROFILE`) so they persist across sessions:
+   ```powershell
+   $env:DEPLOY_DOCKER_IMAGE  = "r151149/macro-tracker"          # Docker Hub image name
+   $env:DEPLOY_SERVER        = "user@your-server.com"           # SSH target
+   $env:DEPLOY_COMPOSE_FILE  = "/path/to/docker-compose.yml"   # Path to compose file on VM
+   ```
+   The script will exit with a clear error if any of these are missing.
+
+3. Set up SSH key auth to avoid password prompts on every deploy:
+   ```powershell
+   ssh-keygen -t ed25519   # skip if you already have a key
+   ssh-copy-id user@your-server.com
+   ```
+
+### Deploy
+
+```powershell
+.\deploy.ps1                  # full deploy (Angular build + Docker build + push + restart)
+.\deploy.ps1 -SkipBuild       # skip Angular build (server-only changes)
+.\deploy.ps1 -Tag v1.2        # tag a specific version
+```
+
+The server `docker-compose.yml` on the VM pulls the image from Docker Hub — no manual file copying needed.
 
 ---
 

@@ -3,9 +3,9 @@ param(
     [string]$Tag = "latest"      # Docker image tag, e.g. -Tag v1.2
 )
 
-$DOCKER_IMAGE  = "r151149/macro-tracker"
-$SERVER        = "sree@iamsreehari.in"
-$COMPOSE_FILE  = "/root/projects/macros-tracker/macros-tracker-server/docker-compose.yml"
+$DOCKER_IMAGE  = if ($env:DEPLOY_DOCKER_IMAGE) { $env:DEPLOY_DOCKER_IMAGE } else { Write-Host "Error: Set DEPLOY_DOCKER_IMAGE env variable (e.g. r151149/macro-tracker)" -ForegroundColor Red; exit 1 }
+$SERVER        = if ($env:DEPLOY_SERVER)       { $env:DEPLOY_SERVER }       else { Write-Host "Error: Set DEPLOY_SERVER env variable (e.g. sree@iamsreehari.in)" -ForegroundColor Red; exit 1 }
+$COMPOSE_FILE  = if ($env:DEPLOY_COMPOSE_FILE) { $env:DEPLOY_COMPOSE_FILE } else { Write-Host "Error: Set DEPLOY_COMPOSE_FILE env variable (e.g. /root/projects/macros-tracker/macros-tracker-server/docker-compose.yml)" -ForegroundColor Red; exit 1 }
 
 # ── 1. Build Angular app ────────────────────────────────────────────────────
 if (-not $SkipBuild) {
