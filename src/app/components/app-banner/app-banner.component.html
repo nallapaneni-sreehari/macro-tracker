@@ -1,0 +1,12 @@
+<div class="app-banner" *ngIf="visible">
+  <div class="banner-inner">
+    <span class="banner-icon">📱</span>
+    <span class="banner-text">
+      Better experience in the app —
+      <a [href]="apkUrl" target="_blank" rel="noopener noreferrer" class="banner-link">Download for Android</a>
+    </span>
+    <button class="banner-close" (click)="dismiss()" aria-label="Dismiss">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+</div>

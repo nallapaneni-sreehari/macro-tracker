@@ -11,9 +11,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginPageModule } from './login/login.module';
 import { ToastBarComponent } from './components/toast-bar/toast-bar.component';
+import { AppBannerComponent } from './components/app-banner/app-banner.component';
 
 @NgModule({
-  declarations: [AppComponent, ToastBarComponent],
+  declarations: [AppComponent, ToastBarComponent, AppBannerComponent],
   imports: [
     BrowserModule,
     CommonModule,
