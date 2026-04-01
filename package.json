@@ -11,7 +11,9 @@
     "watch": "ng build --watch --configuration development",
     "debug:app": "ionic build && npx cap sync && cd android && ./gradlew.bat assembleDebug",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "deploy": "pwsh -File deploy.ps1",
+    "deploy:skip-build": "pwsh -File deploy.ps1 -SkipBuild"
   },
   "private": true,
   "dependencies": {

@@ -35,9 +35,6 @@ log.txt
 npm-debug.log
 yarn-error.log
 
-# Server — managed separately
-/macros-tracker-server
-
 # IDEs and editors
 .idea/
 .project

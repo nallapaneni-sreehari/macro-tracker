@@ -1,0 +1,3 @@
+[submodule "macros-tracker-server"]
+	path = macros-tracker-server
+	url = https://github.com/nallapaneni-sreehari/macro-tracker.git
