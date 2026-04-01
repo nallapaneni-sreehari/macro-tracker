@@ -22,6 +22,7 @@ log.txt
 /www
 /platforms
 /plugins
+/android
 
 # Compiled output
 /dist
@@ -35,7 +36,7 @@ npm-debug.log
 yarn-error.log
 
 # Server — managed separately
-/server
+/macros-tracker-server
 
 # IDEs and editors
 .idea/
@@ -87,4 +88,4 @@ Thumbs.db
 
 # Environment files
 .env
-server/node_modules
+/macros-tracker-server/node_modules
