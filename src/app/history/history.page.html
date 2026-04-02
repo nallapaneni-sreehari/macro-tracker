@@ -17,10 +17,10 @@
   <!-- History -->
   <div *ngIf="segment === 'history'">
     <ion-list *ngIf="dates.length > 0">
-      <ion-item *ngFor="let date of dates">
+      <ion-item *ngFor="let date of visibleDates">
         <ion-icon name="calendar-outline" slot="start" [color]="isToday(date) ? 'primary' : 'medium'"></ion-icon>
         <ion-label>
-          <h2>{{ isToday(date) ? 'Today' : formatDate(date) }}</h2>
+          <h2>{{ isToday(date) ? 'Today · ' + getDayName(date) : formatDate(date) }}</h2>
           <p>{{ getLog(date)?.meals?.length || 0 }} meals · {{ getMacros(date).calories | number:'1.0-0' }} cal</p>
           <p>P:{{ getMacros(date).protein | number:'1.0-0' }}g C:{{ getMacros(date).carbs | number:'1.0-0' }}g F:{{ getMacros(date).fat | number:'1.0-0' }}g</p>
         </ion-label>
@@ -31,6 +31,10 @@
         </ion-note>
       </ion-item>
     </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="loadMore($event)" threshold="200px">
+      <ion-infinite-scroll-content loadingText="Loading more..."></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
 
     <div class="empty-state" *ngIf="dates.length === 0">
       <ion-icon name="time-outline" color="medium"></ion-icon>

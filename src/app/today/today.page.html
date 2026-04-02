@@ -1,6 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>MacroTracker</ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="!isToday" fill="clear" (click)="selectedDate = todayKey; onDateChange()">
+        <ion-icon name="today-outline" slot="start"></ion-icon>
+        Today
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -22,7 +28,7 @@
     </ion-button>
     <ion-chip color="primary" (click)="openDatePicker()">
       <ion-icon name="calendar-outline"></ion-icon>
-      <ion-label>{{ selectedDate === todayKey ? 'Today' : selectedDate }}</ion-label>
+      <ion-label>{{ selectedDate === todayKey ? 'Today · ' + dayName : dayName + ', ' + selectedDate }}</ion-label>
     </ion-chip>
     <ion-button fill="clear" size="small" (click)="goDay(1)" [disabled]="isToday">
       <ion-icon name="chevron-forward-outline"></ion-icon>

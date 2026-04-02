@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController } from '@ionic/angular';
+import { AlertController, IonContent, LoadingController } from '@ionic/angular';
 import { MealService } from '../services/meal.service';
 import {
   DailyLog,
@@ -18,13 +18,16 @@ import {
   standalone: false,
 })
 export class HistoryPage {
+  @ViewChild(IonContent) content!: IonContent;
   dates: string[] = [];
+  visibleDates: string[] = [];
   logs: Map<string, DailyLog> = new Map();
   macros: Map<string, Macros> = new Map();
   goals: MacroGoals = { calories: 2000, protein: 150, carbs: 250, fat: 65 };
   templates: MealTemplate[] = [];
   segment: 'history' | 'templates' = 'history';
   isLoaded = false;
+  private readonly PAGE_SIZE = 7;
 
   constructor(
     private mealService: MealService,
@@ -39,15 +42,40 @@ export class HistoryPage {
     this.goals = this.mealService.goals$.value;
     this.dates = await this.mealService.getLoggedDates();
     this.templates = await this.mealService.getTemplates();
-    for (const date of this.dates) {
-      const log = await this.mealService.loadDay(date);
-      this.logs.set(date, log);
-      this.macros.set(date, calculateDailyMacros(log));
-    }
+    this.visibleDates = [];
+    this.logs.clear();
+    this.macros.clear();
+    await this.loadDatesUpTo(this.PAGE_SIZE);
     // Reload today
     await this.mealService.loadDay(getTodayKey());
     this.isLoaded = true;
     await loading.dismiss();
+  }
+
+  private async loadDatesUpTo(count: number): Promise<void> {
+    const start = this.visibleDates.length;
+    const end = Math.min(start + count, this.dates.length);
+    for (let i = start; i < end; i++) {
+      const date = this.dates[i];
+      if (!this.logs.has(date)) {
+        const log = await this.mealService.loadDay(date);
+        this.logs.set(date, log);
+        this.macros.set(date, calculateDailyMacros(log));
+      }
+      this.visibleDates.push(date);
+    }
+  }
+
+  async loadMore(event: any): Promise<void> {
+    await this.loadDatesUpTo(this.PAGE_SIZE);
+    event.target.complete();
+    if (this.visibleDates.length >= this.dates.length) {
+      event.target.disabled = true;
+    }
+  }
+
+  goToToday(): void {
+    this.content.scrollToTop(400);
   }
 
   getLog(date: string): DailyLog | undefined {
@@ -60,7 +88,13 @@ export class HistoryPage {
 
   formatDate(date: string): string {
     const d = new Date(date + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const rest = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `${dayName}, ${rest}`;
+  }
+
+  getDayName(date: string): string {
+    return new Date(date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short' });
   }
 
   isToday(date: string): boolean {

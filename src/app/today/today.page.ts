@@ -81,6 +81,11 @@ export class TodayPage implements OnInit, OnDestroy {
     return this.selectedDate === getTodayKey();
   }
 
+  get dayName(): string {
+    const [y, m, d] = this.selectedDate.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short' });
+  }
+
   async onDateChange(): Promise<void> {
     const loading = await this.loadingCtrl.create({ message: 'Loading...', duration: 5000 });
     await loading.present();
