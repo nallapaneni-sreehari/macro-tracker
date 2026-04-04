@@ -15,7 +15,7 @@ if (-not $SkipBuild) {
     npm run build
     if ($LASTEXITCODE -ne 0) { Write-Host "Angular build failed." -ForegroundColor Red; exit 1 }
 } else {
-    Write-Host "`n[1/4] Skipping Angular build (using existing www/)." -ForegroundColor Yellow
+    Write-Host "`n[1/4] Skipping Angular build (using existing www-web/)." -ForegroundColor Yellow
 }
 
 # ── 2. Build Docker image ────────────────────────────────────────────────────

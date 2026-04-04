@@ -377,9 +377,15 @@ SMTP_USER=your@gmail.com
 SMTP_PASS=your-app-password
 SMTP_FROM=your@gmail.com
 PORT=2727
+
+# Optional: demo account for app store reviewers (no email needed)
+DEMO_EMAIL=reviewer@yourdomain.com
+DEMO_OTP=123456
 ```
 
 > ⚠️ Never commit `.env` files — they are excluded by `.gitignore`
+>
+> `DEMO_EMAIL` / `DEMO_OTP` are optional. When set, that email skips real OTP sending and accepts the fixed code — intended solely for Google Play / App Store review teams.
 
 ---
 
