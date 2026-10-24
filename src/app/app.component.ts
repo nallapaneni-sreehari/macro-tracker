@@ -8,6 +8,7 @@ import { App } from '@capacitor/app';
 import { StorageService } from './services/storage.service';
 import { ToastService } from './services/toast.service';
 import { LoginPage } from './login/login.page';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private zone: NgZone,
     private storageService: StorageService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {
     this.initializeApp();
   }
@@ -37,8 +39,9 @@ export class AppComponent implements OnInit, OnDestroy {
         (window as any).__removeSplash();
       }
       // Restore email from persistent storage before checking login
+      await this.authService.restoreSession();
       await this.storageService.restoreEmail();
-      if (!this.storageService.getUserEmail()) {
+      if (!this.authService.isAuthenticated() || !this.storageService.getUserEmail()) {
         this.promptForEmail();
       }
       this.registerBackButton();

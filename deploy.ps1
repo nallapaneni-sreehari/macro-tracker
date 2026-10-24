@@ -1,3 +1,7 @@
+# Usage
+# .\deploy.ps1 -SkipBuild
+# .\deploy.ps1 -SkipBuild -Tag v1.2
+
 param(
     [switch]$SkipBuild,          # Skip Angular build (use existing www/)
     [string]$Tag = "latest"      # Docker image tag, e.g. -Tag v1.2

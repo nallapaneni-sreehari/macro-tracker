@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://macrostracker.iamsreehari.in/api'
+  apiUrl: 'http://localhost:2727/api'
 };
 
 /*

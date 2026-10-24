@@ -5,6 +5,7 @@ import { SettingsService } from '../services/settings.service';
 import { StorageService } from '../services/storage.service';
 import { ToastService } from '../services/toast.service';
 import { LoginPage } from '../login/login.page';
+import { AuthService } from '../services/auth.service';
 import {
   UserProfile,
   AppSettings,
@@ -47,7 +48,8 @@ export class SettingsPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private toastService: ToastService,
     private loadingCtrl: LoadingController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -74,6 +76,23 @@ export class SettingsPage implements OnInit, OnDestroy {
       this.toastService.warning('Please enter a valid email');
       return;
     }
+
+    // ---- Validation for numerical fields ----
+    // Age: integer between 0 and 100
+    if (this.profile.age == null || this.profile.age < 0 || this.profile.age > 100 || !Number.isInteger(this.profile.age)) {
+      this.toastService.warning('Age must be an integer between 0 and 100');
+      return;
+    }
+    // Weight: positive and reasonable upper bound (kg or lbs)
+    if (this.profile.weight == null || this.profile.weight <= 0 || this.profile.weight > 500) {
+      this.toastService.warning('Weight must be a positive number up to 500');
+      return;
+    }
+    // Height: positive and reasonable upper bound (cm or ft)
+    if (this.profile.height == null || this.profile.height <= 0 || this.profile.height > 300) {
+      this.toastService.warning('Height must be a positive number up to 300');
+      return;
+    }
     const loading = await this.loadingCtrl.create({ message: 'Saving profile...', duration: 5000 });
     await loading.present();
     this.storageService.setUserEmail(email);
@@ -92,9 +111,8 @@ export class SettingsPage implements OnInit, OnDestroy {
           text: 'Log Out',
           role: 'destructive',
           handler: async () => {
-            // Clear the stored email from both localStorage and Ionic Storage
-            localStorage.removeItem('macro_tracker_user_email');
-            await this.storageService.remove('macro_tracker_user_email');
+            // Clear JWT and cached login identity
+            await this.authService.clearSession();
 
             // Show the login modal
             const modal = await this.modalCtrl.create({

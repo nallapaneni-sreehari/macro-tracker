@@ -87,3 +87,5 @@ Thumbs.db
 # Environment files
 .env
 /macros-tracker-server/node_modules
+releases/*
+*.html

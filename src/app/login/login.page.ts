@@ -6,6 +6,7 @@ import { StorageService } from '../services/storage.service';
 import { MealService } from '../services/meal.service';
 import { ToastService } from '../services/toast.service';
 import { environment } from '../../environments/environment';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ export class LoginPage {
     private mealService: MealService,
     private toastService: ToastService,
     private http: HttpClient,
+    private authService: AuthService,
   ) {}
 
   async sendOtp(): Promise<void> {
@@ -59,12 +61,14 @@ export class LoginPage {
     }
     this.verifying = true;
     try {
-      await firstValueFrom(
-        this.http.post(`${this.apiUrl}/auth/verify-otp`, {
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; token: string }>(`${this.apiUrl}/auth/verify-otp`, {
           email: this.email.trim().toLowerCase(),
           otp,
         }),
       );
+      if (!response.token) throw new Error('No authentication token returned');
+      await this.authService.saveSession(this.email.trim().toLowerCase(), response.token);
       this.storageService.setUserEmail(this.email.trim().toLowerCase());
       await this.mealService.reloadAfterLogin();
       this.toastService.success('Welcome to MacroTracker! 🎉');

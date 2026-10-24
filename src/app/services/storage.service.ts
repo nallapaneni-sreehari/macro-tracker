@@ -42,6 +42,14 @@ export class StorageService {
     }
   }
 
+  async clearAuthSession(): Promise<void> {
+    localStorage.removeItem(USER_EMAIL_KEY);
+    localStorage.removeItem('macro_tracker_auth_token');
+    await this.initLocal();
+    await this._storage?.remove(USER_EMAIL_KEY);
+    await this._storage?.remove('macro_tracker_auth_token');
+  }
+
   private getUserId(): string | null {
     return this.getUserEmail();
   }

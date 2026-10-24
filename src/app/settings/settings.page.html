@@ -23,7 +23,8 @@
           <ion-input label="Name" labelPlacement="stacked" [(ngModel)]="profile.name" placeholder="Your name"></ion-input>
         </ion-item>
         <ion-item>
-          <ion-input label="Age" labelPlacement="stacked" type="number" [(ngModel)]="profile.age" placeholder="25"></ion-input>
+          <!-- Age: integer, max 100 -->
+          <ion-input label="Age" labelPlacement="stacked" type="number" [(ngModel)]="profile.age" placeholder="25" min="0" max="100" step="1"></ion-input>
         </ion-item>
         <ion-item>
           <ion-select label="Gender" labelPlacement="stacked" [(ngModel)]="profile.gender" interface="popover">
@@ -34,14 +35,16 @@
           </ion-select>
         </ion-item>
         <ion-item>
-          <ion-input label="Weight" labelPlacement="stacked" type="number" [(ngModel)]="profile.weight" placeholder="70"></ion-input>
+          <!-- Weight: positive, reasonable upper bound -->
+          <ion-input label="Weight" labelPlacement="stacked" type="number" [(ngModel)]="profile.weight" placeholder="70" min="0" max="500"></ion-input>
           <ion-select slot="end" [(ngModel)]="profile.weightUnit" interface="popover" class="unit-select">
             <ion-select-option value="kg">kg</ion-select-option>
             <ion-select-option value="lbs">lbs</ion-select-option>
           </ion-select>
         </ion-item>
         <ion-item>
-          <ion-input label="Height" labelPlacement="stacked" type="number" [(ngModel)]="profile.height" placeholder="170"></ion-input>
+          <!-- Height: positive, reasonable upper bound -->
+          <ion-input label="Height" labelPlacement="stacked" type="number" [(ngModel)]="profile.height" placeholder="170" min="0" max="300"></ion-input>
           <ion-select slot="end" [(ngModel)]="profile.heightUnit" interface="popover" class="unit-select">
             <ion-select-option value="cm">cm</ion-select-option>
             <ion-select-option value="ft">ft</ion-select-option>
